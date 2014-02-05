@@ -7,15 +7,25 @@
 package com.ChristopherRockwell.topdvdrentals;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Messenger;
 import android.app.Activity;
-import android.view.Menu;
+import android.content.Intent;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class MainActivity.
  */
-public class MainActivity extends Activity {
-
+public class MainActivity extends Activity implements OnClickListener {
+	Button getRentalsBtn;
+	String response = null;
+	private static final String TAG = "MyActivity";
+	
     /* (non-Javadoc)
      * @see android.app.Activity#onCreate(android.os.Bundle)
      */
@@ -23,17 +33,37 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getRentalsBtn = (Button) findViewById(R.id.button1);
+        getRentalsBtn.setOnClickListener(this);
     }
 
+	@Override
+	public void onClick(View arg0) {
+		// TODO Auto-generated method stub
+		Handler getRentalsHandler = new Handler() {
 
-    /* (non-Javadoc)
-     * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-    
+			@Override
+			public void handleMessage(Message msg) {
+				// TODO Auto-generated method stub
+				
+				
+				if (msg.arg1 == RESULT_OK && msg.obj != null) {
+					try {
+						response = (String)msg.obj;
+						Log.i(TAG, response.toString());
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						Log.e("Error: ", e.getMessage().toString());
+						e.printStackTrace();
+					}
+				}
+			}
+    	};
+    	Messenger rentalsMessenger = new Messenger(getRentalsHandler);
+        Intent startRentalsIntent = new Intent(this, TopRentalsService.class);
+        startRentalsIntent.putExtra(TopRentalsService.MSGR_KEY, rentalsMessenger);
+        startRentalsIntent.putExtra(TopRentalsService.URL_STR, "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/top_rentals.json?apikey=bf72tfc2zjfbdscenpwx2e2r");
+        
+        startService(startRentalsIntent);
+	}   
 }
