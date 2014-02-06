@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+// This custom array adapter will populate the ListView rows with the appropriate movie data
 public class MoviesArrayAdapter extends ArrayAdapter<Movie>{
 	Context context;
 
@@ -43,6 +44,7 @@ public class MoviesArrayAdapter extends ArrayAdapter<Movie>{
 		return this.movies.get(index);
 	}
 
+	// get the ListView row and inflate it
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View row = convertView;
 
@@ -55,7 +57,7 @@ public class MoviesArrayAdapter extends ArrayAdapter<Movie>{
 			Log.d("Success: ", "Successfully completed XML Row Inflation!");
 		}
 
-		// Get item
+		// Get item by position
 		Movie movie = getItem(position);
 		img = (SmartImageView) row.findViewById(R.id.img);
 		title = (TextView) row.findViewById(R.id.title);
@@ -71,7 +73,7 @@ public class MoviesArrayAdapter extends ArrayAdapter<Movie>{
 		critic.setTypeface(MainActivity.customFont2);
 		audience.setTypeface(MainActivity.customFont2);
 
-		// set list item values
+		// set list item row values
 		title.setText(movie.name);
 		critic.setText(movie.critic);
 		audience.setText(movie.audience);

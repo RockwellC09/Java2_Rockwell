@@ -20,7 +20,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
-/**
+/*
  * The Class TopRentalsService will retrieve the top DVD rental from the rotten tomatoes API.
  */
 public class TopRentalsService extends IntentService {
@@ -39,7 +39,8 @@ public class TopRentalsService extends IntentService {
 	protected void onHandleIntent(Intent intent) {
 		// TODO Auto-generated method stub
 		Log.i(TAG, "onHandleIntent Started");
-	
+		
+		// get intent values
 		Bundle extras = intent.getExtras();
 		Messenger msgr = (Messenger) extras.get(MSGR_KEY);
 		String urlStr = extras.getString(URL_STR);
@@ -66,6 +67,7 @@ public class TopRentalsService extends IntentService {
 		
 	}
 	
+	// This method get the JSON data from the rotten tomatoes API and returns it
 	public static String getResponse(URL url) {
 		String response = "";
 		try {

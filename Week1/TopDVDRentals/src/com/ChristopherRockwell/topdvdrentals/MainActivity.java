@@ -182,7 +182,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	        
 	        startService(startRentalsIntent);
 	        // If the user doesn't have a connection, but has the txt file then the data will still output
-		} else if (mfile.exists()) {
+		} else if (mfile.exists() && file.connectionStatus(mContext) == false) {
 			String fileString = file.readStrFile(mContext, fileName);
 			Toast.makeText(mContext, "Read data from file", Toast.LENGTH_SHORT).show();
 			String result;

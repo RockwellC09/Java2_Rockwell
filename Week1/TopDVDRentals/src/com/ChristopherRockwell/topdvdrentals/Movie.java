@@ -1,5 +1,11 @@
+/*
+ *@author	Christopher Rockwell 
+ *Description: This class is a constructor for the movie information.
+ */
+
 package com.ChristopherRockwell.topdvdrentals;
 
+// create movie constructor for storing the movie info into an array
 public class Movie {
 
 	public String name;
