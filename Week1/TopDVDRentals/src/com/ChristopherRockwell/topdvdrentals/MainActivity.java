@@ -11,11 +11,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Toast;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -24,7 +26,9 @@ import android.widget.Button;
 public class MainActivity extends Activity implements OnClickListener {
 	Button getRentalsBtn;
 	String response = null;
-	private static final String TAG = "MyActivity";
+	FileManagerSingleton file;
+	Context mContext;
+	String fileName = "TopRental.txt";
 	
     /* (non-Javadoc)
      * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -35,6 +39,9 @@ public class MainActivity extends Activity implements OnClickListener {
         setContentView(R.layout.activity_main);
         getRentalsBtn = (Button) findViewById(R.id.button1);
         getRentalsBtn.setOnClickListener(this);
+        mContext = this;
+        
+        file = FileManagerSingleton.getInstance();
     }
 
 	@Override
@@ -50,7 +57,8 @@ public class MainActivity extends Activity implements OnClickListener {
 				if (msg.arg1 == RESULT_OK && msg.obj != null) {
 					try {
 						response = (String)msg.obj;
-						Log.i(TAG, response.toString());
+						file.writeStrFile(mContext, fileName, response);
+						Toast.makeText(mContext, "Wrote data to file", Toast.LENGTH_SHORT).show();
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						Log.e("Error: ", e.getMessage().toString());
