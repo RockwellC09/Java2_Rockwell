@@ -12,6 +12,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 public class FileManagerSingleton {
@@ -89,5 +91,19 @@ public class FileManagerSingleton {
 		return content;
 		
 	}
+	
+	// check to see if user have a valid internet connection
+		public boolean connectionStatus(Context context) {
+			boolean isConnected = false;
+			ConnectivityManager ConnectMngr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo netInfo = ConnectMngr.getActiveNetworkInfo();
+			if (netInfo != null) {
+				if (netInfo.isConnected()) {
+					isConnected = true;
+				}
+			}
+
+			return isConnected;
+		}
 	
 }

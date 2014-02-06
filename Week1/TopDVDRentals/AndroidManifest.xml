@@ -7,7 +7,9 @@
     <uses-sdk
         android:minSdkVersion="19"
         android:targetSdkVersion="19" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -23,7 +25,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="TopRentalsService"></service>
+
+        <service android:name="com.ChristopherRockwell.topdvdrentals.TopRentalsService" >
+        </service>
+
+        <activity
+            android:name="com.ChristopherRockwell.topdvdrentals.ListRow"
+            android:label="@string/title_activity_list_row" >
+        </activity>
     </application>
 
 </manifest>
