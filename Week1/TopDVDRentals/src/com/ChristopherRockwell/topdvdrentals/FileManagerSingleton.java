@@ -5,6 +5,8 @@
 
 package com.ChristopherRockwell.topdvdrentals;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,6 +30,7 @@ public class FileManagerSingleton {
 		return mngr_instance;
 	}
 		
+	// This method writes my JSON data to a file
 	public boolean writeStrFile (Context context, String fileName, String content) {
 		boolean result = false;
 		
@@ -49,4 +52,42 @@ public class FileManagerSingleton {
 		return result;
 		
 	}
+	
+	// This method reads my JSON data from the file I stored it in
+	public String readStrFile (Context context, String filename) {
+		String content = null;
+		
+		FileInputStream inStream = null;
+		
+		StringBuffer contentBuffer;
+		try {
+			inStream = context.openFileInput(filename);
+			BufferedInputStream buffIn = new BufferedInputStream(inStream);
+			byte[] contentBytes = new byte[1024];
+			int bytesRead = 0;
+			contentBuffer = new StringBuffer();
+			while((bytesRead = buffIn.read(contentBytes)) != -1) {
+				content = new String(contentBytes, 0, bytesRead);
+				contentBuffer.append(content);
+			}
+			content = contentBuffer.toString();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			Log.e("Error: ", e.getMessage().toString());
+			e.printStackTrace();
+		} finally {
+			try {
+				inStream.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				Log.e("Error: ", e.getMessage().toString());
+				e.printStackTrace();
+			}
+		}
+		
+		return content;
+		
+	}
+	
 }
