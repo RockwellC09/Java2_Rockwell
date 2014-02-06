@@ -95,10 +95,10 @@ public class MainActivity extends Activity implements OnClickListener {
 		// check to see if there's a valid connection
 		if (file.connectionStatus(mContext)){
 			// TODO Auto-generated method stub
-			Handler getRentalsHandler = new Handler() {
+			Handler getRentalsHandler = new Handler(new Handler.Callback() {
 
 				@Override
-				public void handleMessage(Message msg) {
+				public boolean handleMessage(Message msg) {
 					// TODO Auto-generated method stub
 					
 					
@@ -151,11 +151,8 @@ public class MainActivity extends Activity implements OnClickListener {
 								mList.add(movie);
 								HashMap<String, String> displayMap = new HashMap<String, String>();
 								displayMap.put("title", title);
-								//displayMap.put("img", img);
 								displayMap.put("critic", criticScore);
 								displayMap.put("audience", audienceScore);
-								
-								//smrtImg.setImageUrl(img);
 								
 								list.add(displayMap);
 							}
@@ -175,8 +172,9 @@ public class MainActivity extends Activity implements OnClickListener {
 							e.printStackTrace();
 						}
 					}
+					return true;
 				}
-	    	};
+	    	});
 	    	Messenger rentalsMessenger = new Messenger(getRentalsHandler);
 	        Intent startRentalsIntent = new Intent(this, TopRentalsService.class);
 	        startRentalsIntent.putExtra(TopRentalsService.MSGR_KEY, rentalsMessenger);
@@ -224,10 +222,6 @@ public class MainActivity extends Activity implements OnClickListener {
 					
 					list.add(displayMap);
 				}
-				
-//				SimpleAdapter adapter = new SimpleAdapter(MainActivity.this, list, R.layout.list_row, 
-//						new String[] {"title", "critic", "audience"}, 
-//						new int[] {R.id.title, R.id.rating1, R.id.rating2});
 				
 				MoviesArrayAdapter adapter = new MoviesArrayAdapter(MainActivity.this, R.layout.list_row, mList);
 
