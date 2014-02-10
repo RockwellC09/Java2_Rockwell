@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Top DVD Rentals</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="btn_text">Get Top Rentals</string>
+    <string name="title">Title</string>
+    <string name="poster">Poster</string>
+    <string name="critic">Critic Rating</string>
+    <string name="audience">Audience Rating</string>
+    <string name="title_activity_list_row">ListRow</string>
+
+</resources>
