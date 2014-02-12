@@ -17,7 +17,7 @@
 
     <TextView
         android:id="@+id/infoView"
-        android:layout_width="276dp"
+        android:layout_width="305dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="40dp"

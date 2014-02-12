@@ -47,6 +47,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	FileManagerSingleton file;
 	Context mContext;
 	public static final String FILE_NAME = "TopRental.txt";
+	public static final String MOVIE_KEY = "movie";
 	boolean writeWorks;
 	ListView listV;
 	public static SmartImageView smrtImg;
@@ -54,6 +55,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	public static Typeface customFont2;
 	File mfile;
 	Intent secondActivity;
+	int selected;
 	
     /* (non-Javadoc)
      * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -98,7 +100,7 @@ public class MainActivity extends Activity implements OnClickListener {
         	
         	@Override
         	public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
-        		String selected = (listV.getItemAtPosition(position).toString());
+        		selected = position - 1;
         		
         		JSONObject castObj;
 				try {
@@ -106,18 +108,21 @@ public class MainActivity extends Activity implements OnClickListener {
 					String fileString = file.readStrFile(mContext, FILE_NAME);
 					JSONObject obj = new JSONObject(fileString);
 					JSONArray movies = obj.getJSONArray("movies");
-					castObj = movies.getJSONObject(Integer.parseInt(selected.toString()));
-					secondActivity.putExtra("movie", castObj.toString());
+					castObj = movies.getJSONObject(selected);
+					secondActivity.putExtra(MOVIE_KEY, castObj.toString());
+					startActivityForResult(secondActivity,0);
 				} catch (NumberFormatException e) {
 					// TODO Auto-generated catch block
 					Log.e("Error: ", e.getMessage().toString());
+					startActivityForResult(secondActivity,1);
 					e.printStackTrace();
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					Log.e("Error: ", e.getMessage().toString());
+					startActivityForResult(secondActivity,1);
 					e.printStackTrace();
 				}
-				startActivityForResult(secondActivity,0);
+				
         	}
         });
     }
