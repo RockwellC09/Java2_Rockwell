@@ -7,8 +7,6 @@ package com.ChristopherRockwell.topdvdrentals;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import android.content.Context;
@@ -30,29 +28,6 @@ public class FileManagerSingleton {
 			mngr_instance = new FileManagerSingleton();
 		}
 		return mngr_instance;
-	}
-		
-	// This method writes my JSON data to a file
-	public boolean writeStrFile (Context context, String fileName, String content) {
-		boolean result = false;
-		
-		FileOutputStream outStream = null;
-		try {
-			outStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-			outStream.write(content.getBytes());
-			Log.i("Wrote string file", "successfully");
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			Log.e("Error: ", e.getMessage().toString());
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Log.e("Error:", e.getMessage().toString());
-		}
-		
-		return result;
-		
 	}
 	
 	// This method reads my JSON data from the file I stored it in

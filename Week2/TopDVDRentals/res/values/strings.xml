@@ -10,5 +10,7 @@
     <string name="critic">Critic Rating</string>
     <string name="audience">Audience Rating</string>
     <string name="title_activity_list_row">ListRow</string>
+    <string name="title_activity_info">InfoActivity</string>
+    <string name="dummy_text">Lorem Ipsum</string>
 
 </resources>

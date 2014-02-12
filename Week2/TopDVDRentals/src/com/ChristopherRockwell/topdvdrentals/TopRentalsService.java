@@ -6,6 +6,8 @@
 package com.ChristopherRockwell.topdvdrentals;
 
 import java.io.BufferedInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,6 +15,7 @@ import java.net.URLConnection;
 
 import android.app.Activity;
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
@@ -89,5 +92,28 @@ public class TopRentalsService extends IntentService {
 
 		return response;
 	}
+	
+	// This method writes my JSON data to a file
+		public static boolean writeStrFile (Context context, String fileName, String content) {
+			boolean result = false;
+			
+			FileOutputStream outStream = null;
+			try {
+				outStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+				outStream.write(content.getBytes());
+				Log.i("Wrote string file", "successfully");
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				Log.e("Error: ", e.getMessage().toString());
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				Log.e("Error:", e.getMessage().toString());
+			}
+			
+			return result;
+			
+		}
 
 }

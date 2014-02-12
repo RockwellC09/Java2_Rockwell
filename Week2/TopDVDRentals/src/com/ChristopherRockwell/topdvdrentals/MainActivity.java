@@ -30,6 +30,8 @@ import android.graphics.Typeface;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -44,13 +46,14 @@ public class MainActivity extends Activity implements OnClickListener {
 	String response = null;
 	FileManagerSingleton file;
 	Context mContext;
-	String fileName = "TopRental.txt";
+	public static final String FILE_NAME = "TopRental.txt";
 	boolean writeWorks;
 	ListView listV;
 	public static SmartImageView smrtImg;
 	private List<Movie> mList;
 	public static Typeface customFont2;
 	File mfile;
+	Intent secondActivity;
 	
     /* (non-Javadoc)
      * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -62,7 +65,7 @@ public class MainActivity extends Activity implements OnClickListener {
         getRentalsBtn = (Button) this.findViewById(R.id.button1);
         getRentalsBtn.setOnClickListener(this);
         mContext = this;
-        mfile = mContext.getFileStreamPath(fileName);
+        mfile = mContext.getFileStreamPath(FILE_NAME);
         
         // custom typefaces 
         Typeface customFont = Typeface.createFromAsset(this.getAssets(), "Exo2-Bold.ttf");
@@ -87,6 +90,36 @@ public class MainActivity extends Activity implements OnClickListener {
         listV.addHeaderView(listHeader);
         
         file = FileManagerSingleton.getInstance();
+        
+        // create intent and list view click listener in preparation of moving to the second view
+        secondActivity = new Intent(this,InfoActivity.class);
+        
+        listV.setOnItemClickListener(new OnItemClickListener() {
+        	
+        	@Override
+        	public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
+        		String selected = (listV.getItemAtPosition(position).toString());
+        		
+        		JSONObject castObj;
+				try {
+					// send specific movie to the info activity
+					String fileString = file.readStrFile(mContext, FILE_NAME);
+					JSONObject obj = new JSONObject(fileString);
+					JSONArray movies = obj.getJSONArray("movies");
+					castObj = movies.getJSONObject(Integer.parseInt(selected.toString()));
+					secondActivity.putExtra("movie", castObj.toString());
+				} catch (NumberFormatException e) {
+					// TODO Auto-generated catch block
+					Log.e("Error: ", e.getMessage().toString());
+					e.printStackTrace();
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					Log.e("Error: ", e.getMessage().toString());
+					e.printStackTrace();
+				}
+				startActivityForResult(secondActivity,0);
+        	}
+        });
     }
 
 	@Override
@@ -105,7 +138,7 @@ public class MainActivity extends Activity implements OnClickListener {
 					if (msg.arg1 == RESULT_OK && msg.obj != null) {
 						try {
 							response = (String)msg.obj;
-							file.writeStrFile(mContext, fileName, response);
+							TopRentalsService.writeStrFile(mContext, FILE_NAME, response);
 							writeWorks = true;
 							Toast.makeText(mContext, "Wrote data to file", Toast.LENGTH_SHORT).show();
 							
@@ -120,7 +153,7 @@ public class MainActivity extends Activity implements OnClickListener {
 					
 					// if the write data works, read the the data
 					if (writeWorks) {
-						String fileString = file.readStrFile(mContext, fileName);
+						String fileString = file.readStrFile(mContext, FILE_NAME);
 						Toast.makeText(mContext, "Read data from file", Toast.LENGTH_SHORT).show();
 						String result;
 						String title, img, criticScore, audienceScore;
@@ -183,7 +216,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	        startService(startRentalsIntent);
 	        // If the user doesn't have a connection, but has the txt file then the data will still output
 		} else if (mfile.exists() && file.connectionStatus(mContext) == false) {
-			String fileString = file.readStrFile(mContext, fileName);
+			String fileString = file.readStrFile(mContext, FILE_NAME);
 			Toast.makeText(mContext, "Read data from file", Toast.LENGTH_SHORT).show();
 			String result;
 			String title, img, criticScore, audienceScore;
