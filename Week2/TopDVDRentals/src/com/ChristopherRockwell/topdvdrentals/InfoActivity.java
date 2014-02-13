@@ -1,5 +1,7 @@
 package com.ChristopherRockwell.topdvdrentals;
 
+import java.io.Serializable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,7 +36,7 @@ public class InfoActivity extends Activity {
 		titleView = (TextView) this.findViewById(R.id.titleView);
 		infoView = (TextView) this.findViewById(R.id.infoView);
 		textButton = (Button) this.findViewById(R.id.emailBtn);
-		posterButton = (Button) this.findViewById(R.id.posterBtn);
+		posterButton = (Button) this.findViewById(R.id.srcBtn);
 		
 		// custom typefaces 
         Typeface customFont = Typeface.createFromAsset(this.getAssets(), "Exo2-Bold.ttf");
@@ -107,5 +109,17 @@ public class InfoActivity extends Activity {
 	    data.putExtra("srcMovie", title);
 	    setResult(RESULT_OK, data);
 	    super.finish();
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		super.onSaveInstanceState(savedInstanceState);
+		Log.i("Saved: ", "Instance data saved!");
+	}
+	
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+
+		super.onRestoreInstanceState(savedInstanceState);
+		Log.i("Restored: ", "Instance data restored!");
 	}
 }

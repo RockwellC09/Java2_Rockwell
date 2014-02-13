@@ -61,9 +61,9 @@ public class MainActivity extends Activity implements OnClickListener {
 	Intent secondActivity;
 	int selected;
 	MoviesArrayAdapter adapter;
-	EditText srcText;
 	boolean checkSrc = false;
 	boolean haveResults = false;
+	String srcResult;
 	
     /* (non-Javadoc)
      * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -74,8 +74,7 @@ public class MainActivity extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getRentalsBtn = (Button) this.findViewById(R.id.emailBtn);
-        srcButton = (Button) this.findViewById(R.id.posterBtn);
-        srcText = (EditText) this.findViewById(R.id.editText1);
+        srcButton = (Button) this.findViewById(R.id.srcBtn);
         getRentalsBtn.setOnClickListener(this);
         mContext = this;
         mfile = mContext.getFileStreamPath(FILE_NAME);
@@ -114,6 +113,7 @@ public class MainActivity extends Activity implements OnClickListener {
      				adapter = new MoviesArrayAdapter(MainActivity.this, R.layout.list_row, mList);
 
      				listV.setAdapter(adapter);
+     				haveResults = true;
      				// retain the search data in the list view
      				if (savedInstanceState.getBoolean("bool")) {
      					adapter.getFilter().filter(savedInstanceState.getString("eText").toString());
@@ -163,20 +163,48 @@ public class MainActivity extends Activity implements OnClickListener {
         	// TODO Auto-generated method stub
 			@Override
 			public void onClick(View v) {
-				// check to see if get items has been clicked and the results are in the listView
-				if (haveResults) {
-					// check to see if its a number and between 1 and 99
-					if (srcText.getText().toString().matches("\\d+") && Integer.parseInt(srcText.getText().toString()) >= 0 && 
-							Integer.parseInt(srcText.getText().toString()) <= 100) {
-						adapter.getFilter().filter(srcText.getText().toString());
-						checkSrc = true;
+				// setup alert dialog that allows users to search the listView
+				AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
+				alert.setTitle("Search by Minimum Critic Rating");
+				alert.setMessage("Input Minimum Rating ");
+				// Set an EditText view to get user input 
+				final EditText input = new EditText(mContext);
+				input.setText(srcResult);
+				alert.setView(input);
+				alert.setPositiveButton("Search", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+				    srcResult = input.getText().toString();
+				 // check to see if get items has been clicked and the results are in the listView
+				    if (haveResults) {
+						// check to see if its a number and between 0 and 100
+						if (srcResult.matches("\\d+") && Integer.parseInt(srcResult) >= 0 && 
+								Integer.parseInt(srcResult) <= 100) {
+							adapter.getFilter().filter(srcResult);
+							checkSrc = true;
+						} else {
+							Toast.makeText(mContext, "Please enter a number between 0 and 100", Toast.LENGTH_LONG).show();
+						}
 					} else {
-						Toast.makeText(mContext, "Please enter a number between 0 and 100", Toast.LENGTH_LONG).show();
+						Toast.makeText(mContext, "You must get rental results before searching.", Toast.LENGTH_LONG).show();
 					}
-				} else {
-					Toast.makeText(mContext, "You must get rental results before searching.", Toast.LENGTH_LONG).show();
-				}
-				
+				        }
+				    });
+				alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+				    public void onClick(DialogInterface dialog, int whichButton) {
+				         // Canceled.
+				        }
+				    });
+				// clear search query
+				alert.setNeutralButton("Clear Search", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						adapter.getFilter().filter("0");
+						srcResult = "";
+					}
+				});
+				alert.show();
 			}
 		});
     }
@@ -359,18 +387,21 @@ public class MainActivity extends Activity implements OnClickListener {
 	
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
+		super.onSaveInstanceState(savedInstanceState);
 		if (mList != null && !mList.isEmpty()) {
 			savedInstanceState.putSerializable(LIST_KEY, (Serializable) mList);
 			savedInstanceState.putBoolean("bool", checkSrc);
-			savedInstanceState.putString("eText", srcText.getText().toString());
+			savedInstanceState.putString("eText", srcResult);
 			Log.i("Saved: ", "Instance data saved!");
 		}
-
-		super.onSaveInstanceState(savedInstanceState);
 	}
 
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 
 		super.onRestoreInstanceState(savedInstanceState);
+		savedInstanceState.getSerializable(LIST_KEY);
+		checkSrc = savedInstanceState.getBoolean("bool");
+		srcResult = savedInstanceState.getString("eText");
+		Log.i("Restored: ", "Instance data restored!");
 	}
 }
