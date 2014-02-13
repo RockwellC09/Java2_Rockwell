@@ -28,7 +28,7 @@ public class MoviesArrayAdapter extends ArrayAdapter<Movie>{
 	private TextView critic;
 	private TextView audience;
 	static String TAG = "NETWORK DATA - MAINACTIVITY";
-	
+
 	private List<Movie> movies = new ArrayList<Movie>();
 
 	public MoviesArrayAdapter(Context context, int textViewResourceId,
@@ -65,12 +65,12 @@ public class MoviesArrayAdapter extends ArrayAdapter<Movie>{
 		title = (TextView) row.findViewById(R.id.title);
 		critic = (TextView) row.findViewById(R.id.rating1);
 		audience = (TextView) row.findViewById(R.id.rating2);
-		
+
 		// set ListView rows text color and custom font
 		title.setTextColor(context.getResources().getColor(R.color.btn_color));
 		critic.setTextColor(context.getResources().getColor(R.color.btn_color));
 		audience.setTextColor(context.getResources().getColor(R.color.btn_color));
-		
+
 		title.setTypeface(MainActivity.customFont2);
 		critic.setTypeface(MainActivity.customFont2);
 		audience.setTypeface(MainActivity.customFont2);
@@ -84,61 +84,61 @@ public class MoviesArrayAdapter extends ArrayAdapter<Movie>{
 
 		return row;
 	}
-	
-    public class MovieFilter extends Filter {
 
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            // TODO Auto-generated method stub
+	public class MovieFilter extends Filter {
 
-            constraint = constraint.toString();
-            int conInt = Integer.parseInt((String) constraint);
-
-            FilterResults newFilterResults = new FilterResults();
-
-            if (constraint != null && constraint.length() > 0) {
-
-
-            	List<Movie> auxData = new ArrayList<Movie>();
-
-                for (int i = 0; i < movies.size(); i++) {
-                    if (Integer.parseInt(movies.get(i).critic) >= conInt)
-                        auxData.add(movies.get(i));
-                }
-
-                newFilterResults.count = auxData.size();
-                newFilterResults.values = auxData;
-            } else {
-
-                newFilterResults.count = movies.size();
-                newFilterResults.values = movies;
-            }
-
-            return newFilterResults;
-        }
-
-        @SuppressWarnings("unchecked")
 		@Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
+		protected FilterResults performFiltering(CharSequence constraint) {
+			// TODO Auto-generated method stub
 
-            List<Movie> resultData = new ArrayList<Movie>();
+			constraint = constraint.toString();
+			int conInt = Integer.parseInt((String) constraint);
 
-            resultData = (List<Movie>) results.values;
+			FilterResults newFilterResults = new FilterResults();
 
-            MoviesArrayAdapter adapter = new MoviesArrayAdapter(context, R.layout.list_row, resultData);
+			if (constraint != null && constraint.length() > 0) {
+
+
+				List<Movie> auxData = new ArrayList<Movie>();
+
+				for (int i = 0; i < movies.size(); i++) {
+					if (Integer.parseInt(movies.get(i).critic) >= conInt)
+						auxData.add(movies.get(i));
+				}
+
+				newFilterResults.count = auxData.size();
+				newFilterResults.values = auxData;
+			} else {
+
+				newFilterResults.count = movies.size();
+				newFilterResults.values = movies;
+			}
+
+			return newFilterResults;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		protected void publishResults(CharSequence constraint, FilterResults results) {
+
+			List<Movie> resultData = new ArrayList<Movie>();
+
+			resultData = (List<Movie>) results.values;
+
+			MoviesArrayAdapter adapter = new MoviesArrayAdapter(context, R.layout.list_row, resultData);
 
 			MainActivity.listV.setAdapter(adapter);
 
-//          notifyDataSetChanged();
-        }
+			//          notifyDataSetChanged();
+		}
 
-    }
-    @Override
-    public Filter getFilter() {
-    	Filter filter = null;
+	}
+	@Override
+	public Filter getFilter() {
+		Filter filter = null;
 
-        if(filter == null)
-            filter = new MovieFilter();
-        return filter;
-    }
+		if(filter == null)
+			filter = new MovieFilter();
+		return filter;
+	}
 }

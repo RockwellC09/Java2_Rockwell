@@ -64,77 +64,77 @@ public class MainActivity extends Activity implements OnClickListener {
 	boolean checkSrc = false;
 	boolean haveResults = false;
 	String srcResult;
-	
-    /* (non-Javadoc)
-     * @see android.app.Activity#onCreate(android.os.Bundle)
-     */
-    @SuppressWarnings("unchecked")
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 */
+	@SuppressWarnings("unchecked")
 	@Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        getRentalsBtn = (Button) this.findViewById(R.id.emailBtn);
-        srcButton = (Button) this.findViewById(R.id.srcBtn);
-        getRentalsBtn.setOnClickListener(this);
-        mContext = this;
-        mfile = mContext.getFileStreamPath(FILE_NAME);
-        
-        // custom typefaces 
-        Typeface customFont = Typeface.createFromAsset(this.getAssets(), "Exo2-Bold.ttf");
-        customFont2 = Typeface.createFromAsset(this.getAssets(), "Exo2-Medium.ttf");
-        
-        getRentalsBtn.setTypeface(customFont);
-        srcButton.setTypeface(customFont);
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		getRentalsBtn = (Button) this.findViewById(R.id.emailBtn);
+		srcButton = (Button) this.findViewById(R.id.srcBtn);
+		getRentalsBtn.setOnClickListener(this);
+		mContext = this;
+		mfile = mContext.getFileStreamPath(FILE_NAME);
 
-        listV = (ListView) this.findViewById(R.id.listView1);
-        View listHeader = this.getLayoutInflater().inflate(R.layout.list_header, null);
-        
-     // reference smart ImaveView to be used when setting the movie poster image
-     	smrtImg = (SmartImageView) findViewById(R.id.img);
-        
-        // set custom text for the list headers
-        TextView tv1 = (TextView) listHeader.findViewById(R.id.title_header);
-        TextView tv3 = (TextView) listHeader.findViewById(R.id.rating1_header);
-        TextView tv4 = (TextView) listHeader.findViewById(R.id.rating2_header);
-        tv1.setTypeface(customFont);
-        tv3.setTypeface(customFont);
-        tv4.setTypeface(customFont);
-        
-        listV.addHeaderView(listHeader);
-        
-        file = FileManagerSingleton.getInstance();
-        
-     // check for savedInstance and populate list
-     		if (savedInstanceState != null) {
-     			mList = (List<Movie>) savedInstanceState.getSerializable(LIST_KEY);
-     			
-     			if (mList != null) {
-     				Log.i("List: ", "Not null");
-     				adapter = new MoviesArrayAdapter(MainActivity.this, R.layout.list_row, mList);
+		// custom typefaces 
+		Typeface customFont = Typeface.createFromAsset(this.getAssets(), "Exo2-Bold.ttf");
+		customFont2 = Typeface.createFromAsset(this.getAssets(), "Exo2-Medium.ttf");
 
-     				listV.setAdapter(adapter);
-     				haveResults = true;
-     				// retain the search data in the list view
-     				if (savedInstanceState.getBoolean("bool")) {
-     					adapter.getFilter().filter(savedInstanceState.getString("eText").toString());
-     					checkSrc = true;
-     				}
-     				
-     			} else {
-     				Log.i("List: ", "null");
-     			}
-     		}
-        
-        // create intent and list view click listener in preparation of moving to the second view
-        secondActivity = new Intent(mContext,InfoActivity.class);
-        
-        listV.setOnItemClickListener(new OnItemClickListener() {
-        	
-        	@Override
-        	public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
-        		selected = position - 1;
-        		
-        		JSONObject castObj;
+		getRentalsBtn.setTypeface(customFont);
+		srcButton.setTypeface(customFont);
+
+		listV = (ListView) this.findViewById(R.id.listView1);
+		View listHeader = this.getLayoutInflater().inflate(R.layout.list_header, null);
+
+		// reference smart ImaveView to be used when setting the movie poster image
+		smrtImg = (SmartImageView) findViewById(R.id.img);
+
+		// set custom text for the list headers
+		TextView tv1 = (TextView) listHeader.findViewById(R.id.title_header);
+		TextView tv3 = (TextView) listHeader.findViewById(R.id.rating1_header);
+		TextView tv4 = (TextView) listHeader.findViewById(R.id.rating2_header);
+		tv1.setTypeface(customFont);
+		tv3.setTypeface(customFont);
+		tv4.setTypeface(customFont);
+
+		listV.addHeaderView(listHeader);
+
+		file = FileManagerSingleton.getInstance();
+
+		// check for savedInstance and populate list
+		if (savedInstanceState != null) {
+			mList = (List<Movie>) savedInstanceState.getSerializable(LIST_KEY);
+
+			if (mList != null) {
+				Log.i("List: ", "Not null");
+				adapter = new MoviesArrayAdapter(MainActivity.this, R.layout.list_row, mList);
+
+				listV.setAdapter(adapter);
+				haveResults = true;
+				// retain the search data in the list view
+				if (savedInstanceState.getBoolean("bool")) {
+					adapter.getFilter().filter(savedInstanceState.getString("eText").toString());
+					checkSrc = true;
+				}
+
+			} else {
+				Log.i("List: ", "null");
+			}
+		}
+
+		// create intent and list view click listener in preparation of moving to the second view
+		secondActivity = new Intent(mContext,InfoActivity.class);
+
+		listV.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
+				selected = position - 1;
+
+				JSONObject castObj;
 				try {
 					// send specific movie to the info activity
 					String fileString = file.readStrFile(mContext, FILE_NAME);
@@ -154,13 +154,13 @@ public class MainActivity extends Activity implements OnClickListener {
 					startActivityForResult(secondActivity,1);
 					e.printStackTrace();
 				}
-				
-        	}
-        });
-      //enables filtering for the contents of the given ListView
-        listV.setTextFilterEnabled(true);
-        srcButton.setOnClickListener(new OnClickListener() {
-        	// TODO Auto-generated method stub
+
+			}
+		});
+		//enables filtering for the contents of the given ListView
+		listV.setTextFilterEnabled(true);
+		srcButton.setOnClickListener(new OnClickListener() {
+			// TODO Auto-generated method stub
 			@Override
 			public void onClick(View v) {
 				// setup alert dialog that allows users to search the listView
@@ -172,31 +172,31 @@ public class MainActivity extends Activity implements OnClickListener {
 				input.setText(srcResult);
 				alert.setView(input);
 				alert.setPositiveButton("Search", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-				    srcResult = input.getText().toString();
-				 // check to see if get items has been clicked and the results are in the listView
-				    if (haveResults) {
-						// check to see if its a number and between 0 and 100
-						if (srcResult.matches("\\d+") && Integer.parseInt(srcResult) >= 0 && 
-								Integer.parseInt(srcResult) <= 100) {
-							adapter.getFilter().filter(srcResult);
-							checkSrc = true;
+					public void onClick(DialogInterface dialog, int whichButton) {
+						srcResult = input.getText().toString();
+						// check to see if get items has been clicked and the results are in the listView
+						if (haveResults) {
+							// check to see if its a number and between 0 and 100
+							if (srcResult.matches("\\d+") && Integer.parseInt(srcResult) >= 0 && 
+									Integer.parseInt(srcResult) <= 100) {
+								adapter.getFilter().filter(srcResult);
+								checkSrc = true;
+							} else {
+								Toast.makeText(mContext, "Please enter a number between 0 and 100", Toast.LENGTH_LONG).show();
+							}
 						} else {
-							Toast.makeText(mContext, "Please enter a number between 0 and 100", Toast.LENGTH_LONG).show();
+							Toast.makeText(mContext, "You must get rental results before searching.", Toast.LENGTH_LONG).show();
 						}
-					} else {
-						Toast.makeText(mContext, "You must get rental results before searching.", Toast.LENGTH_LONG).show();
 					}
-				        }
-				    });
+				});
 				alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-				    public void onClick(DialogInterface dialog, int whichButton) {
-				         // Canceled.
-				        }
-				    });
+					public void onClick(DialogInterface dialog, int whichButton) {
+						// Canceled.
+					}
+				});
 				// clear search query
 				alert.setNeutralButton("Clear Search", new DialogInterface.OnClickListener() {
-					
+
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						// TODO Auto-generated method stub
@@ -207,11 +207,11 @@ public class MainActivity extends Activity implements OnClickListener {
 				alert.show();
 			}
 		});
-    }
+	}
 
 	@Override
 	public void onClick(View arg0) {
-		
+
 		// check to see if there's a valid connection
 		if (file.connectionStatus(mContext)){
 			// TODO Auto-generated method stub
@@ -220,15 +220,15 @@ public class MainActivity extends Activity implements OnClickListener {
 				@Override
 				public boolean handleMessage(Message msg) {
 					// TODO Auto-generated method stub
-					
-					
+
+
 					if (msg.arg1 == RESULT_OK && msg.obj != null) {
 						try {
 							response = (String)msg.obj;
 							TopRentalsService.writeStrFile(mContext, FILE_NAME, response);
 							writeWorks = true;
 							Toast.makeText(mContext, "Wrote data to file", Toast.LENGTH_SHORT).show();
-							
+
 						} catch (Exception e) {
 							writeWorks = false;
 							// TODO Auto-generated catch block
@@ -237,7 +237,7 @@ public class MainActivity extends Activity implements OnClickListener {
 							e.printStackTrace();
 						}
 					}
-					
+
 					// if the write data works, read the the data
 					if (writeWorks) {
 						String fileString = file.readStrFile(mContext, FILE_NAME);
@@ -251,12 +251,12 @@ public class MainActivity extends Activity implements OnClickListener {
 							// set JSONOject and cast into array the back into an object to get movie proper info
 							JSONObject obj = new JSONObject(fileString);
 							JSONArray movies = obj.getJSONArray("movies");
-							
+
 							for (int i = 0; i < movies.length(); i++) {
 								JSONObject castObj = movies.getJSONObject(i);
 								JSONObject antrCastObj = castObj.getJSONObject("ratings");
 								JSONObject imgCast = castObj.getJSONObject("posters");
-								
+
 								title = castObj.getString("title");
 								img = imgCast.getString("profile");
 								criticScore = antrCastObj.getString("critics_score");
@@ -273,19 +273,19 @@ public class MainActivity extends Activity implements OnClickListener {
 								displayMap.put("title", title);
 								displayMap.put("critic", criticScore);
 								displayMap.put("audience", audienceScore);
-								
+
 								list.add(displayMap);
 							}
-							
-//							SimpleAdapter adapter = new SimpleAdapter(MainActivity.this, list, R.layout.list_row, 
-//									new String[] {"title", "critic", "audience"}, 
-//									new int[] {R.id.title, R.id.rating1, R.id.rating2});
-							
+
+							//							SimpleAdapter adapter = new SimpleAdapter(MainActivity.this, list, R.layout.list_row, 
+							//									new String[] {"title", "critic", "audience"}, 
+							//									new int[] {R.id.title, R.id.rating1, R.id.rating2});
+
 							adapter = new MoviesArrayAdapter(MainActivity.this, R.layout.list_row, mList);
 
 							listV.setAdapter(adapter);
 							haveResults = true;
-							
+
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							Log.e("Error: ", e.getMessage().toString());
@@ -295,14 +295,14 @@ public class MainActivity extends Activity implements OnClickListener {
 					}
 					return true;
 				}
-	    	});
-	    	Messenger rentalsMessenger = new Messenger(getRentalsHandler);
-	        Intent startRentalsIntent = new Intent(this, TopRentalsService.class);
-	        startRentalsIntent.putExtra(TopRentalsService.MSGR_KEY, rentalsMessenger);
-	        startRentalsIntent.putExtra(TopRentalsService.URL_STR, "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/top_rentals.json?apikey=bf72tfc2zjfbdscenpwx2e2r");
-	        
-	        startService(startRentalsIntent);
-	        // If the user doesn't have a connection, but has the txt file then the data will still output
+			});
+			Messenger rentalsMessenger = new Messenger(getRentalsHandler);
+			Intent startRentalsIntent = new Intent(this, TopRentalsService.class);
+			startRentalsIntent.putExtra(TopRentalsService.MSGR_KEY, rentalsMessenger);
+			startRentalsIntent.putExtra(TopRentalsService.URL_STR, "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/top_rentals.json?apikey=bf72tfc2zjfbdscenpwx2e2r");
+
+			startService(startRentalsIntent);
+			// If the user doesn't have a connection, but has the txt file then the data will still output
 		} else if (mfile.exists() && file.connectionStatus(mContext) == false) {
 			String fileString = file.readStrFile(mContext, FILE_NAME);
 			Toast.makeText(mContext, "Read data from file", Toast.LENGTH_SHORT).show();
@@ -315,12 +315,12 @@ public class MainActivity extends Activity implements OnClickListener {
 				// set JSONOject and cast into array the back into an object to get movie proper info
 				JSONObject obj = new JSONObject(fileString);
 				JSONArray movies = obj.getJSONArray("movies");
-				
+
 				for (int i = 0; i < movies.length(); i++) {
 					JSONObject castObj = movies.getJSONObject(i);
 					JSONObject antrCastObj = castObj.getJSONObject("ratings");
 					JSONObject imgCast = castObj.getJSONObject("posters");
-					
+
 					title = castObj.getString("title");
 					img = imgCast.getString("profile");
 					criticScore = antrCastObj.getString("critics_score");
@@ -338,16 +338,16 @@ public class MainActivity extends Activity implements OnClickListener {
 					//displayMap.put("img", img);
 					displayMap.put("critic", criticScore);
 					displayMap.put("audience", audienceScore);
-					
+
 					//smrtImg.setImageUrl(img);
-					
+
 					list.add(displayMap);
 				}
-				
+
 				adapter = new MoviesArrayAdapter(MainActivity.this, R.layout.list_row, mList);
 
 				listV.setAdapter(adapter);
-				
+
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				Log.e("Error: ", e.getMessage().toString());
@@ -371,20 +371,20 @@ public class MainActivity extends Activity implements OnClickListener {
 			// show alert
 			builder1.show();
 		}
-		
+
 	}  
 	public List<Movie> getList() {
 		return this.mList;
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-	  if (resultCode == RESULT_OK && requestCode == 0) {
-	    Bundle result = data.getExtras();
-	    Toast.makeText(mContext, "You just viewed " + result.getString("srcMovie") + " movie info.", Toast.LENGTH_LONG).show();
-	  }
+		if (resultCode == RESULT_OK && requestCode == 0) {
+			Bundle result = data.getExtras();
+			Toast.makeText(mContext, "You just viewed " + result.getString("srcMovie") + " movie info.", Toast.LENGTH_LONG).show();
+		}
 	}
-	
+
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		super.onSaveInstanceState(savedInstanceState);

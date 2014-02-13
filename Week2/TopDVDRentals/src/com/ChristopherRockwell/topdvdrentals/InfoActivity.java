@@ -1,7 +1,5 @@
 package com.ChristopherRockwell.topdvdrentals;
 
-import java.io.Serializable;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,36 +30,36 @@ public class InfoActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.info_activity);
 		context = this;
-		
+
 		titleView = (TextView) this.findViewById(R.id.titleView);
 		infoView = (TextView) this.findViewById(R.id.infoView);
 		textButton = (Button) this.findViewById(R.id.emailBtn);
 		posterButton = (Button) this.findViewById(R.id.srcBtn);
-		
+
 		// custom typefaces 
-        Typeface customFont = Typeface.createFromAsset(this.getAssets(), "Exo2-Bold.ttf");
-        Typeface customFont2 = Typeface.createFromAsset(this.getAssets(), "Exo2-Medium.ttf");
-        
-        titleView.setTypeface(customFont);
-        infoView.setTypeface(customFont2);
-        textButton.setTypeface(customFont);
-        posterButton.setTypeface(customFont);
-        
-        // get intent data set in MainActivity
-        Bundle data = getIntent().getExtras();
-        String myData = data.getString(MainActivity.MOVIE_KEY);
-	    Log.i("Movie Result: ", myData);
-	    
-	    Toast.makeText(this, "Second Activity", Toast.LENGTH_LONG).show();
-	    
-	    JSONObject obj;
+		Typeface customFont = Typeface.createFromAsset(this.getAssets(), "Exo2-Bold.ttf");
+		Typeface customFont2 = Typeface.createFromAsset(this.getAssets(), "Exo2-Medium.ttf");
+
+		titleView.setTypeface(customFont);
+		infoView.setTypeface(customFont2);
+		textButton.setTypeface(customFont);
+		posterButton.setTypeface(customFont);
+
+		// get intent data set in MainActivity
+		Bundle data = getIntent().getExtras();
+		String myData = data.getString(MainActivity.MOVIE_KEY);
+		Log.i("Movie Result: ", myData);
+
+		Toast.makeText(this, "Second Activity", Toast.LENGTH_LONG).show();
+
+		JSONObject obj;
 		try {
 			obj = new JSONObject(myData);
 			JSONObject imgCast = obj.getJSONObject("posters");
 			title = obj.getString("title");
 			posterURL = imgCast.getString("original");
 			String synopsis = obj.getString("synopsis");
-			
+
 			titleView.setText(title);
 			infoView.setText("Movie Info: " + synopsis);
 		} catch (JSONException e) {
@@ -69,10 +67,10 @@ public class InfoActivity extends Activity {
 			Log.e("Error: ", e.getMessage().toString());
 			e.printStackTrace();
 		} 
-		
+
 		// text message intent
 		textButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
@@ -89,10 +87,10 @@ public class InfoActivity extends Activity {
 				}
 			}
 		});
-		
+
 		// URL intent
 		posterButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
@@ -102,21 +100,21 @@ public class InfoActivity extends Activity {
 			}
 		});
 	}
-	
+
 	@Override
 	public void finish() {
-	    Intent data = new Intent();
-	    data.putExtra("srcMovie", title);
-	    setResult(RESULT_OK, data);
-	    super.finish();
+		Intent data = new Intent();
+		data.putExtra("srcMovie", title);
+		setResult(RESULT_OK, data);
+		super.finish();
 	}
-	
+
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		super.onSaveInstanceState(savedInstanceState);
 		Log.i("Saved: ", "Instance data saved!");
 	}
-	
+
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 
 		super.onRestoreInstanceState(savedInstanceState);
