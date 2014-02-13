@@ -5,19 +5,10 @@
     android:background="@color/bg_color"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/titleView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:text="@string/dummy_text"
-        android:textColor="@color/btn_color"
-        android:textSize="20sp" />
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:gravity="center" >
 
         <Button
@@ -26,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:text="@string/email_str"
+            android:text="@string/text_str"
             android:textColor="@color/btn_color"
             android:textSize="16sp" />
 
@@ -40,8 +31,17 @@
             android:text="@string/poster_str"
             android:textColor="@color/btn_color"
             android:textSize="16sp" />
-
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/titleView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="@string/dummy_text"
+        android:textColor="@color/btn_color"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/infoView"

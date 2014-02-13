@@ -63,6 +63,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	MoviesArrayAdapter adapter;
 	EditText srcText;
 	boolean checkSrc = false;
+	boolean haveResults = false;
 	
     /* (non-Javadoc)
      * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -162,14 +163,20 @@ public class MainActivity extends Activity implements OnClickListener {
         	// TODO Auto-generated method stub
 			@Override
 			public void onClick(View v) {
-				// check to see if its a number and between 1 and 99
-				if (srcText.getText().toString().matches("\\d+") && Integer.parseInt(srcText.getText().toString()) >= 0 && 
-						Integer.parseInt(srcText.getText().toString()) <= 100) {
-					adapter.getFilter().filter(srcText.getText().toString());
-					checkSrc = true;
+				// check to see if get items has been clicked and the results are in the listView
+				if (haveResults) {
+					// check to see if its a number and between 1 and 99
+					if (srcText.getText().toString().matches("\\d+") && Integer.parseInt(srcText.getText().toString()) >= 0 && 
+							Integer.parseInt(srcText.getText().toString()) <= 100) {
+						adapter.getFilter().filter(srcText.getText().toString());
+						checkSrc = true;
+					} else {
+						Toast.makeText(mContext, "Please enter a number between 0 and 100", Toast.LENGTH_LONG).show();
+					}
 				} else {
-					Toast.makeText(mContext, "Please enter a number between 0 and 100", Toast.LENGTH_SHORT).show();
+					Toast.makeText(mContext, "You must get rental results before searching.", Toast.LENGTH_LONG).show();
 				}
+				
 			}
 		});
     }
@@ -249,6 +256,7 @@ public class MainActivity extends Activity implements OnClickListener {
 							adapter = new MoviesArrayAdapter(MainActivity.this, R.layout.list_row, mList);
 
 							listV.setAdapter(adapter);
+							haveResults = true;
 							
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
@@ -339,6 +347,14 @@ public class MainActivity extends Activity implements OnClickListener {
 	}  
 	public List<Movie> getList() {
 		return this.mList;
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	  if (resultCode == RESULT_OK && requestCode == 0) {
+	    Bundle result = data.getExtras();
+	    Toast.makeText(mContext, "You just viewed " + result.getString("srcMovie") + " movie info.", Toast.LENGTH_LONG).show();
+	  }
 	}
 	
 	@Override
