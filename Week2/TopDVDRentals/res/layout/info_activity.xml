@@ -15,6 +15,34 @@
         android:textColor="@color/btn_color"
         android:textSize="20sp" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center" >
+
+        <Button
+            android:id="@+id/emailBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/email_str"
+            android:textColor="@color/btn_color"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/posterBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/emailBtn"
+            android:text="@string/poster_str"
+            android:textColor="@color/btn_color"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
     <TextView
         android:id="@+id/infoView"
         android:layout_width="305dp"

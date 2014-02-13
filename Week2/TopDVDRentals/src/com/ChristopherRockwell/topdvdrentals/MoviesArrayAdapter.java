@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.TextView;
 
 // This custom array adapter will populate the ListView rows with the appropriate movie data
@@ -26,6 +27,7 @@ public class MoviesArrayAdapter extends ArrayAdapter<Movie>{
 	private TextView title;
 	private TextView critic;
 	private TextView audience;
+	static String TAG = "NETWORK DATA - MAINACTIVITY";
 	
 	private List<Movie> movies = new ArrayList<Movie>();
 
@@ -82,4 +84,61 @@ public class MoviesArrayAdapter extends ArrayAdapter<Movie>{
 
 		return row;
 	}
+	
+    public class MovieFilter extends Filter {
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            // TODO Auto-generated method stub
+
+            constraint = constraint.toString();
+            int conInt = Integer.parseInt((String) constraint);
+
+            FilterResults newFilterResults = new FilterResults();
+
+            if (constraint != null && constraint.length() > 0) {
+
+
+            	List<Movie> auxData = new ArrayList<Movie>();
+
+                for (int i = 0; i < movies.size(); i++) {
+                    if (Integer.parseInt(movies.get(i).critic) >= conInt)
+                        auxData.add(movies.get(i));
+                }
+
+                newFilterResults.count = auxData.size();
+                newFilterResults.values = auxData;
+            } else {
+
+                newFilterResults.count = movies.size();
+                newFilterResults.values = movies;
+            }
+
+            return newFilterResults;
+        }
+
+        @SuppressWarnings("unchecked")
+		@Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+
+            List<Movie> resultData = new ArrayList<Movie>();
+
+            resultData = (List<Movie>) results.values;
+
+            MoviesArrayAdapter adapter = new MoviesArrayAdapter(context, R.layout.list_row, resultData);
+
+			MainActivity.listV.setAdapter(adapter);
+
+//          notifyDataSetChanged();
+        }
+
+    }
+    @Override
+    public Filter getFilter() {
+    	Filter filter = null;
+
+        if(filter == null)
+            filter = new MovieFilter();
+        return filter;
+    }
 }

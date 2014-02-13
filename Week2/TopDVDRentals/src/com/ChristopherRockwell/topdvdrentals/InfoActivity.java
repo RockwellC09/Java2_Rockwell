@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 import android.app.Activity;
 import android.content.Context;
@@ -14,6 +15,8 @@ public class InfoActivity extends Activity {
 
 	TextView titleView;
 	TextView infoView;
+	Button emailButton;
+	Button posterButton;
 	Context context;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +26,8 @@ public class InfoActivity extends Activity {
 		
 		titleView = (TextView) this.findViewById(R.id.titleView);
 		infoView = (TextView) this.findViewById(R.id.infoView);
+		emailButton = (Button) this.findViewById(R.id.emailBtn);
+		posterButton = (Button) this.findViewById(R.id.posterBtn);
 		
 		// custom typefaces 
         Typeface customFont = Typeface.createFromAsset(this.getAssets(), "Exo2-Bold.ttf");
@@ -30,6 +35,8 @@ public class InfoActivity extends Activity {
         
         titleView.setTypeface(customFont);
         infoView.setTypeface(customFont2);
+        emailButton.setTypeface(customFont);
+        posterButton.setTypeface(customFont);
         
         // get intent data set in MainActivity
         Bundle data = getIntent().getExtras();

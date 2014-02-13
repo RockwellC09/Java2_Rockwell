@@ -5,9 +5,15 @@
 
 package com.ChristopherRockwell.topdvdrentals;
 
-// create movie constructor for storing the movie info into an array
-public class Movie {
+import java.io.Serializable;
 
+// create movie constructor for storing the movie info into an array
+public class Movie implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public String name;
 	public String image;
 	public String critic;

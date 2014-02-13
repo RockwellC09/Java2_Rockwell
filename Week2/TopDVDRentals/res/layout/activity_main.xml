@@ -11,21 +11,50 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/editText1"
+            android:layout_width="164dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/posterBtn"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/posterBtn"
+            android:ems="10"
+            android:hint="@string/edit_hint"
+            android:inputType="text"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/posterBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/src_btn"
+            android:textColor="@color/btn_color"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/emailBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/btn_color"
-        android:textColor="#FFFFFF"
-        android:text="@string/btn_text" />
+        android:text="@string/btn_text"
+        android:textColor="#FFFFFF" />
 
     <ListView
         android:id="@+id/listView1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dip"
         android:layout_marginTop="20dp"
+        android:layout_weight="0.34"
         android:clickable="true" >
-
     </ListView>
 
 </LinearLayout>

@@ -7,6 +7,7 @@
 package com.ChristopherRockwell.topdvdrentals;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +34,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,28 +45,36 @@ import android.widget.Toast;
  */
 public class MainActivity extends Activity implements OnClickListener {
 	Button getRentalsBtn;
+	Button srcButton;
 	String response = null;
 	FileManagerSingleton file;
 	Context mContext;
 	public static final String FILE_NAME = "TopRental.txt";
 	public static final String MOVIE_KEY = "movie";
+	public static final String LIST_KEY = "myList";
 	boolean writeWorks;
-	ListView listV;
+	static ListView listV;
 	public static SmartImageView smrtImg;
 	private List<Movie> mList;
 	public static Typeface customFont2;
 	File mfile;
 	Intent secondActivity;
 	int selected;
+	MoviesArrayAdapter adapter;
+	EditText srcText;
+	boolean checkSrc = false;
 	
     /* (non-Javadoc)
      * @see android.app.Activity#onCreate(android.os.Bundle)
      */
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getRentalsBtn = (Button) this.findViewById(R.id.button1);
+        getRentalsBtn = (Button) this.findViewById(R.id.emailBtn);
+        srcButton = (Button) this.findViewById(R.id.posterBtn);
+        srcText = (EditText) this.findViewById(R.id.editText1);
         getRentalsBtn.setOnClickListener(this);
         mContext = this;
         mfile = mContext.getFileStreamPath(FILE_NAME);
@@ -74,6 +84,7 @@ public class MainActivity extends Activity implements OnClickListener {
         customFont2 = Typeface.createFromAsset(this.getAssets(), "Exo2-Medium.ttf");
         
         getRentalsBtn.setTypeface(customFont);
+        srcButton.setTypeface(customFont);
 
         listV = (ListView) this.findViewById(R.id.listView1);
         View listHeader = this.getLayoutInflater().inflate(R.layout.list_header, null);
@@ -93,8 +104,28 @@ public class MainActivity extends Activity implements OnClickListener {
         
         file = FileManagerSingleton.getInstance();
         
+     // check for savedInstance and populate list
+     		if (savedInstanceState != null) {
+     			mList = (List<Movie>) savedInstanceState.getSerializable(LIST_KEY);
+     			
+     			if (mList != null) {
+     				Log.i("List: ", "Not null");
+     				adapter = new MoviesArrayAdapter(MainActivity.this, R.layout.list_row, mList);
+
+     				listV.setAdapter(adapter);
+     				// retain the search data in the list view
+     				if (savedInstanceState.getBoolean("bool")) {
+     					adapter.getFilter().filter(savedInstanceState.getString("eText").toString());
+     					checkSrc = true;
+     				}
+     				
+     			} else {
+     				Log.i("List: ", "null");
+     			}
+     		}
+        
         // create intent and list view click listener in preparation of moving to the second view
-        secondActivity = new Intent(this,InfoActivity.class);
+        secondActivity = new Intent(mContext,InfoActivity.class);
         
         listV.setOnItemClickListener(new OnItemClickListener() {
         	
@@ -125,6 +156,22 @@ public class MainActivity extends Activity implements OnClickListener {
 				
         	}
         });
+      //enables filtering for the contents of the given ListView
+        listV.setTextFilterEnabled(true);
+        srcButton.setOnClickListener(new OnClickListener() {
+        	// TODO Auto-generated method stub
+			@Override
+			public void onClick(View v) {
+				// check to see if its a number and between 1 and 99
+				if (srcText.getText().toString().matches("\\d+") && Integer.parseInt(srcText.getText().toString()) >= 0 && 
+						Integer.parseInt(srcText.getText().toString()) <= 100) {
+					adapter.getFilter().filter(srcText.getText().toString());
+					checkSrc = true;
+				} else {
+					Toast.makeText(mContext, "Please enter a number between 0 and 100", Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
     }
 
 	@Override
@@ -199,7 +246,7 @@ public class MainActivity extends Activity implements OnClickListener {
 //									new String[] {"title", "critic", "audience"}, 
 //									new int[] {R.id.title, R.id.rating1, R.id.rating2});
 							
-							MoviesArrayAdapter adapter = new MoviesArrayAdapter(MainActivity.this, R.layout.list_row, mList);
+							adapter = new MoviesArrayAdapter(MainActivity.this, R.layout.list_row, mList);
 
 							listV.setAdapter(adapter);
 							
@@ -261,7 +308,7 @@ public class MainActivity extends Activity implements OnClickListener {
 					list.add(displayMap);
 				}
 				
-				MoviesArrayAdapter adapter = new MoviesArrayAdapter(MainActivity.this, R.layout.list_row, mList);
+				adapter = new MoviesArrayAdapter(MainActivity.this, R.layout.list_row, mList);
 
 				listV.setAdapter(adapter);
 				
@@ -292,5 +339,22 @@ public class MainActivity extends Activity implements OnClickListener {
 	}  
 	public List<Movie> getList() {
 		return this.mList;
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		if (mList != null && !mList.isEmpty()) {
+			savedInstanceState.putSerializable(LIST_KEY, (Serializable) mList);
+			savedInstanceState.putBoolean("bool", checkSrc);
+			savedInstanceState.putString("eText", srcText.getText().toString());
+			Log.i("Saved: ", "Instance data saved!");
+		}
+
+		super.onSaveInstanceState(savedInstanceState);
+	}
+
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+
+		super.onRestoreInstanceState(savedInstanceState);
 	}
 }
