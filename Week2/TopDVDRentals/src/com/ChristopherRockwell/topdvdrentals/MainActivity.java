@@ -64,6 +64,9 @@ public class MainActivity extends Activity implements OnClickListener {
 	boolean checkSrc = false;
 	boolean haveResults = false;
 	String srcResult;
+	JSONObject castObj;
+	String itemText;
+	String objText;
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -132,17 +135,22 @@ public class MainActivity extends Activity implements OnClickListener {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
-				selected = position - 1;
+				//selected = position - 1;
+				itemText = listV.getItemAtPosition(position).toString();
 
-				JSONObject castObj;
 				try {
 					// send specific movie to the info activity
 					String fileString = file.readStrFile(mContext, FILE_NAME);
 					JSONObject obj = new JSONObject(fileString);
 					JSONArray movies = obj.getJSONArray("movies");
-					castObj = movies.getJSONObject(selected);
-					secondActivity.putExtra(MOVIE_KEY, castObj.toString());
-					startActivityForResult(secondActivity,0);
+					for (int i = 0; i < movies.length(); i++) {
+						castObj = movies.getJSONObject(i);
+						objText = castObj.getString("title");
+						if (itemText.contains(objText)) {
+							secondActivity.putExtra(MOVIE_KEY, castObj.toString());
+							startActivityForResult(secondActivity,0);
+						}
+					}
 				} catch (NumberFormatException e) {
 					// TODO Auto-generated catch block
 					Log.e("Error: ", e.getMessage().toString());
@@ -201,6 +209,7 @@ public class MainActivity extends Activity implements OnClickListener {
 					public void onClick(DialogInterface dialog, int which) {
 						// TODO Auto-generated method stub
 						adapter.getFilter().filter("0");
+						checkSrc = false;
 						srcResult = "";
 					}
 				});

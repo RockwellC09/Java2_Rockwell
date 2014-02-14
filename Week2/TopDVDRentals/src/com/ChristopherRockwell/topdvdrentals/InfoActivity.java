@@ -25,6 +25,9 @@ public class InfoActivity extends Activity {
 	Context context;
 	public String title;
 	public String posterURL;
+	Bundle data;
+	String myData;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -40,18 +43,25 @@ public class InfoActivity extends Activity {
 		Typeface customFont = Typeface.createFromAsset(this.getAssets(), "Exo2-Bold.ttf");
 		Typeface customFont2 = Typeface.createFromAsset(this.getAssets(), "Exo2-Medium.ttf");
 
+		// set custom fonts
 		titleView.setTypeface(customFont);
 		infoView.setTypeface(customFont2);
 		textButton.setTypeface(customFont);
 		posterButton.setTypeface(customFont);
 
-		// get intent data set in MainActivity
-		Bundle data = getIntent().getExtras();
-		String myData = data.getString(MainActivity.MOVIE_KEY);
+		if (savedInstanceState != null) {
+			// get intent data from savedInstance
+			data = savedInstanceState.getParcelable("bundleData");
+		} else {
+			// get intent data set in MainActivity
+			data = getIntent().getExtras();
+		}
+		myData = data.getString(MainActivity.MOVIE_KEY);
 		Log.i("Movie Result: ", myData);
 
 		Toast.makeText(this, "Second Activity", Toast.LENGTH_LONG).show();
 
+		// parse JSON data
 		JSONObject obj;
 		try {
 			obj = new JSONObject(myData);
@@ -101,6 +111,7 @@ public class InfoActivity extends Activity {
 		});
 	}
 
+	// pass movie title back to MainActivityå
 	@Override
 	public void finish() {
 		Intent data = new Intent();
@@ -112,6 +123,8 @@ public class InfoActivity extends Activity {
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		super.onSaveInstanceState(savedInstanceState);
+		// saved bundle data
+		savedInstanceState.putParcelable("bundleData", data);
 		Log.i("Saved: ", "Instance data saved!");
 	}
 
