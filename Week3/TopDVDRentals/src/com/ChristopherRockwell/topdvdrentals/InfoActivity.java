@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -76,8 +77,6 @@ public class InfoActivity extends Activity {
 		myData = data.getString(MainActivity.MOVIE_KEY);
 		Log.i("Movie Result: ", myData);
 
-		Toast.makeText(this, "Second Activity", Toast.LENGTH_LONG).show();
-
 		// parse JSON data
 		JSONObject obj;
 		try {
@@ -126,6 +125,14 @@ public class InfoActivity extends Activity {
 				startActivity(urlIntent);
 			}
 		});
+		
+		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			Intent firstActivity = new Intent(getApplicationContext(),MainActivity.class);
+			startActivity(firstActivity);
+		} else {
+			Toast.makeText(this, "Second Activity", Toast.LENGTH_LONG).show();
+		}
+		
 	}
 
 	// pass movie title back to MainActivityå
