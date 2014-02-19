@@ -3,6 +3,11 @@ package com.ChristopherRockwell.topdvdrentals;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Point;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -13,14 +18,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.graphics.Point;
-import android.graphics.Typeface;
 
-public class InfoActivity extends Activity implements InfoFragment.infoInterface {
+public class InfoActivity extends Activity {
 
 	TextView titleView;
 	TextView infoView;
@@ -35,11 +34,13 @@ public class InfoActivity extends Activity implements InfoFragment.infoInterface
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			setContentView(R.layout.rentals_frament);
-		} else {
-			setContentView(R.layout.info_activity);
-		}
+//		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//			setContentView(R.layout.rentals_frament);
+//		} else {
+//			setContentView(R.layout.info_activity);
+//		}
+		
+		setContentView(R.layout.info_activity);
 		context = this;
 
 		titleView = (TextView) this.findViewById(R.id.titleView);

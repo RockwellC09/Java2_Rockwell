@@ -318,58 +318,7 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 
 							// if the write data works, read the the data
 							if (writeWorks) {
-								String fileString = file.readStrFile(mContext, FILE_NAME);
-								Toast.makeText(mContext, "Read data from file", Toast.LENGTH_SHORT).show();
-								String result;
-								String title, img, criticScore, audienceScore;
-								ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
-								mList = new ArrayList<Movie>();
-
-								try {
-									// set JSONOject and cast into array the back into an object to get movie proper info
-									JSONObject obj = new JSONObject(fileString);
-									JSONArray movies = obj.getJSONArray("movies");
-
-									for (int i = 0; i < movies.length(); i++) {
-										JSONObject castObj = movies.getJSONObject(i);
-										JSONObject antrCastObj = castObj.getJSONObject("ratings");
-										JSONObject imgCast = castObj.getJSONObject("posters");
-
-										title = castObj.getString("title");
-										img = imgCast.getString("profile");
-										criticScore = antrCastObj.getString("critics_score");
-										audienceScore = antrCastObj.getString("audience_score");
-
-										result = "Title: " + title + "\r\n"
-												+ "Year Released: " + img + "\r\n"
-												+ "Critic Score: " + criticScore + "%\r\n"
-												+ "Audience Score: " + audienceScore + "%\r\n";
-										Log.i("Result", result);
-										Movie movie = new Movie(title, img, criticScore, audienceScore);
-										mList.add(movie);
-										HashMap<String, String> displayMap = new HashMap<String, String>();
-										displayMap.put("title", title);
-										displayMap.put("critic", criticScore);
-										displayMap.put("audience", audienceScore);
-
-										list.add(displayMap);
-									}
-
-									//							SimpleAdapter adapter = new SimpleAdapter(MainActivity.this, list, R.layout.list_row, 
-									//									new String[] {"title", "critic", "audience"}, 
-									//									new int[] {R.id.title, R.id.rating1, R.id.rating2});
-
-									adapter = new MoviesArrayAdapter(MainActivity.this, R.layout.list_row, mList);
-
-									listV.setAdapter(adapter);
-									haveResults = true;
-
-								} catch (JSONException e) {
-									// TODO Auto-generated catch block
-									Log.e("Error: ", e.getMessage().toString());
-									Toast.makeText(mContext, "Error: Couldn't retrieve the data", Toast.LENGTH_SHORT).show();
-									e.printStackTrace();
-								}
+								readParse();
 							}
 							return true;
 						}
@@ -382,56 +331,7 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 					startService(startRentalsIntent);
 					// If the user doesn't have a connection, but has the txt file then the data will still output
 				} else if (mfile.exists() && file.connectionStatus(mContext) == false) {
-					String fileString = file.readStrFile(mContext, FILE_NAME);
-					Toast.makeText(mContext, "Read data from file", Toast.LENGTH_SHORT).show();
-					String result;
-					String title, img, criticScore, audienceScore;
-					ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
-					mList = new ArrayList<Movie>();
-
-					try {
-						// set JSONOject and cast into array the back into an object to get movie proper info
-						JSONObject obj = new JSONObject(fileString);
-						JSONArray movies = obj.getJSONArray("movies");
-
-						for (int i = 0; i < movies.length(); i++) {
-							JSONObject castObj = movies.getJSONObject(i);
-							JSONObject antrCastObj = castObj.getJSONObject("ratings");
-							JSONObject imgCast = castObj.getJSONObject("posters");
-
-							title = castObj.getString("title");
-							img = imgCast.getString("profile");
-							criticScore = antrCastObj.getString("critics_score");
-							audienceScore = antrCastObj.getString("audience_score");
-
-							result = "Title: " + title + "\r\n"
-									+ "Year Released: " + img + "\r\n"
-									+ "Critic Score: " + criticScore + "%\r\n"
-									+ "Audience Score: " + audienceScore + "%\r\n";
-							Log.i("Result", result);
-							Movie movie = new Movie(title, img, criticScore, audienceScore);
-							mList.add(movie);
-							HashMap<String, String> displayMap = new HashMap<String, String>();
-							displayMap.put("title", title);
-							//displayMap.put("img", img);
-							displayMap.put("critic", criticScore);
-							displayMap.put("audience", audienceScore);
-
-							//smrtImg.setImageUrl(img);
-
-							list.add(displayMap);
-						}
-
-						adapter = new MoviesArrayAdapter(MainActivity.this, R.layout.list_row, mList);
-
-						listV.setAdapter(adapter);
-
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						Log.e("Error: ", e.getMessage().toString());
-						Toast.makeText(mContext, "Error: Couldn't retrieve the data", Toast.LENGTH_SHORT).show();
-						e.printStackTrace();
-					}
+					readParse();
 					// Check for no connection
 				} else {
 					// create alert dialog for users without a valid internet connection
@@ -449,6 +349,61 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 					// show alert
 					builder1.show();
 				}
+	}
+	
+	public void readParse(){
+		String fileString = file.readStrFile(mContext, FILE_NAME);
+		Toast.makeText(mContext, "Read data from file", Toast.LENGTH_SHORT).show();
+		String result;
+		String title, img, criticScore, audienceScore;
+		ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+		mList = new ArrayList<Movie>();
+
+		try {
+			// set JSONOject and cast into array the back into an object to get movie proper info
+			JSONObject obj = new JSONObject(fileString);
+			JSONArray movies = obj.getJSONArray("movies");
+
+			for (int i = 0; i < movies.length(); i++) {
+				JSONObject castObj = movies.getJSONObject(i);
+				JSONObject antrCastObj = castObj.getJSONObject("ratings");
+				JSONObject imgCast = castObj.getJSONObject("posters");
+
+				title = castObj.getString("title");
+				img = imgCast.getString("profile");
+				criticScore = antrCastObj.getString("critics_score");
+				audienceScore = antrCastObj.getString("audience_score");
+
+				result = "Title: " + title + "\r\n"
+						+ "Year Released: " + img + "\r\n"
+						+ "Critic Score: " + criticScore + "%\r\n"
+						+ "Audience Score: " + audienceScore + "%\r\n";
+				Log.i("Result", result);
+				Movie movie = new Movie(title, img, criticScore, audienceScore);
+				mList.add(movie);
+				HashMap<String, String> displayMap = new HashMap<String, String>();
+				displayMap.put("title", title);
+				displayMap.put("critic", criticScore);
+				displayMap.put("audience", audienceScore);
+
+				list.add(displayMap);
+			}
+
+			//							SimpleAdapter adapter = new SimpleAdapter(MainActivity.this, list, R.layout.list_row, 
+			//									new String[] {"title", "critic", "audience"}, 
+			//									new int[] {R.id.title, R.id.rating1, R.id.rating2});
+
+			adapter = new MoviesArrayAdapter(MainActivity.this, R.layout.list_row, mList);
+
+			listV.setAdapter(adapter);
+			haveResults = true;
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			Log.e("Error: ", e.getMessage().toString());
+			Toast.makeText(mContext, "Error: Couldn't retrieve the data", Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
+		}
 	}
 	
 
