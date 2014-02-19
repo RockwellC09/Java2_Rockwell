@@ -20,7 +20,7 @@ import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.Typeface;
 
-public class InfoActivity extends Activity {
+public class InfoActivity extends Activity implements InfoFragment.infoInterface {
 
 	TextView titleView;
 	TextView infoView;
@@ -37,7 +37,6 @@ public class InfoActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
 			setContentView(R.layout.rentals_frament);
-			
 		} else {
 			setContentView(R.layout.info_activity);
 		}

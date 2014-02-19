@@ -34,11 +34,22 @@ public class InfoFragment extends Fragment {
 	public String posterURL;
 	Bundle data;
 	public String myData;
+	private infoInterface parentActivity;
+	
+	public interface infoInterface {
+		
+	}
 	
 	@Override
 	public void onAttach(Activity activity) {
 		// TODO Auto-generated method stub
 		super.onAttach(activity);
+		
+		if (activity instanceof infoInterface) {
+			parentActivity = (infoInterface) activity;
+		} else {
+			throw new ClassCastException(activity.toString() + "must implement onRentalsClick");
+		}
 	}
 
 	@Override
