@@ -11,7 +11,7 @@
     <string name="audience">Audience Rating</string>
     <string name="title_activity_list_row">ListRow</string>
     <string name="title_activity_info">InfoActivity</string>
-    <string name="dummy_text">Lorem Ipsum</string>
+    <string name="dummy_text">Select a Movie</string>
     <string name="edit_hint">Search by Minimum Critic Rating</string>
     <string name="src_btn">Search</string>
     <string name="text_str">Share via Text</string>
