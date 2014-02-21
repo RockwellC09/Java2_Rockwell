@@ -32,7 +32,7 @@ public class RentalsFramgment extends Fragment {
 	public interface onRentalsClick {
 		public void onRentalsButtonClick();
 	}
-	
+
 	private onRentalsClick parentActivity;
 	public static final String FILE_NAME = "TopRental.txt";
 	public static final String MOVIE_KEY = "movie";
@@ -48,12 +48,12 @@ public class RentalsFramgment extends Fragment {
 	boolean haveResults = false;
 	boolean checkSrc = false;
 	MoviesArrayAdapter adapter;
-	
+
 	@Override
 	public void onAttach(Activity activity) {
 		// TODO Auto-generated method stub
 		super.onAttach(activity);
-		
+
 		if (activity instanceof onRentalsClick) {
 			parentActivity = (onRentalsClick) activity;
 		} else {
@@ -75,9 +75,9 @@ public class RentalsFramgment extends Fragment {
 				// TODO Auto-generated method stub
 				parentActivity.onRentalsButtonClick();
 			}
-			
+
 		});
-		
+
 		srcButton.setOnClickListener(new View.OnClickListener() {
 			// TODO Auto-generated method stub
 			public void onClick(View v) {
@@ -148,7 +148,7 @@ public class RentalsFramgment extends Fragment {
 						if (itemText.contains(objText)) {
 							//secondActivity.putExtra(MOVIE_KEY, castObj.toString());
 							//startActivityForResult(secondActivity,0);
-							InfoFragment fragment = (InfoFragment) getFragmentManager().findFragmentById(R.id.info_fragment);
+							InfoFragment fragment = (InfoFragment) getFragmentManager().findFragmentById(R.id.myinfo_fragment);
 							fragment.myData = castObj.toString();
 							fragment.DisplayMovie();
 						}

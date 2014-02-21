@@ -25,8 +25,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class InfoFragment extends Fragment {
-	TextView titleView;
-	TextView infoView;
+	static TextView titleView;
+	static TextView infoView;
 	Button textButton;
 	Button posterButton;
 	Context context;
@@ -34,11 +34,11 @@ public class InfoFragment extends Fragment {
 	public String posterURL;
 	Bundle data;
 	public String myData;
-	
+
 	public interface infoInterface {
-		
+
 	}
-	
+
 	@Override
 	public void onAttach(Activity activity) {
 		// TODO Auto-generated method stub
@@ -67,13 +67,13 @@ public class InfoFragment extends Fragment {
 		infoView.setTypeface(customFont2);
 		textButton.setTypeface(customFont);
 		posterButton.setTypeface(customFont);
-		
+
 		myData = "";
 		Log.i("Movie Result: ", myData);
-		
+
 		return view;
 	}
-	
+
 	public void DisplayMovie() {
 		// parse JSON data
 		JSONObject obj;

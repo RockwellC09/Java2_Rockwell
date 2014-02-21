@@ -68,6 +68,7 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 	JSONObject castObj;
 	String itemText;
 	String objText;
+	static String dataString;
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -78,8 +79,14 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 		super.onCreate(savedInstanceState);
 		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
 			setContentView(R.layout.rentals_frament);
+			//check to see if the users is back from the second activity and display the item they recently viewed in portrait mode
+			if (dataString != null) {
+				InfoFragment fragment = (InfoFragment) getFragmentManager().findFragmentById(R.id.myinfo_fragment);
+				fragment.myData = dataString;
+				fragment.DisplayMovie();
+			}
 		} else {
-			setContentView(R.layout.activity_main);
+			setContentView(R.layout.main_fragment);
 		}
 		getRentalsBtn = (Button) this.findViewById(R.id.rentalsBtn);
 		srcButton = (Button) this.findViewById(R.id.srcBtn);
@@ -154,9 +161,10 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 						if (itemText.contains(objText)) {
 							secondActivity.putExtra(MOVIE_KEY, castObj.toString());
 							if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-								InfoFragment fragment = (InfoFragment) getFragmentManager().findFragmentById(R.id.info_fragment);
+								InfoFragment fragment = (InfoFragment) getFragmentManager().findFragmentById(R.id.myinfo_fragment);
 								fragment.myData = castObj.toString();
 								fragment.DisplayMovie();
+								Log.i("movieObj:", castObj.toString() );
 							} else {
 								startActivityForResult(secondActivity,0);
 							}
@@ -235,6 +243,12 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 				alert.show();
 			}
 		});
+
+		// force click the rentals button for better data retention 
+		if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && dataString != null) {
+			getRentalsBtn.performClick();
+
+		}
 	}
 
 	@Override
@@ -272,85 +286,77 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 		srcResult = savedInstanceState.getString("eText");
 		Log.i("Restored: ", "Instance data restored!");
 	}
-	
+
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-
-		// Checks the orientation of the screen
-		if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			Intent firstActivity = new Intent(mContext,MainActivity.class);
-			startActivity(firstActivity);
-		} else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
-			Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
-			Intent firstActivity = new Intent(mContext,MainActivity.class);
-			startActivity(firstActivity);
-		}
-
+		// restart the activity when the orientation is changed
+		Intent firstActivity = new Intent(mContext,MainActivity.class);
+		startActivity(firstActivity);
 	}
-	
+
 	public void onRentalsButtonClick() {
 		// check to see if there's a valid connection
-				if (file.connectionStatus(mContext)){
+		if (file.connectionStatus(mContext)){
+			// TODO Auto-generated method stub
+			Handler getRentalsHandler = new Handler(new Handler.Callback() {
+
+				@Override
+				public boolean handleMessage(Message msg) {
 					// TODO Auto-generated method stub
-					Handler getRentalsHandler = new Handler(new Handler.Callback() {
-
-						@Override
-						public boolean handleMessage(Message msg) {
-							// TODO Auto-generated method stub
 
 
-							if (msg.arg1 == RESULT_OK && msg.obj != null) {
-								try {
-									response = (String)msg.obj;
-									TopRentalsService.writeStrFile(mContext, FILE_NAME, response);
-									writeWorks = true;
-									Toast.makeText(mContext, "Wrote data to file", Toast.LENGTH_SHORT).show();
+					if (msg.arg1 == RESULT_OK && msg.obj != null) {
+						try {
+							response = (String)msg.obj;
+							TopRentalsService.writeStrFile(mContext, FILE_NAME, response);
+							writeWorks = true;
+							Toast.makeText(mContext, "Wrote data to file", Toast.LENGTH_SHORT).show();
 
-								} catch (Exception e) {
-									writeWorks = false;
-									// TODO Auto-generated catch block
-									Log.e("Error: ", e.getMessage().toString());
-									Toast.makeText(mContext, "Error: Couldn't write data to file", Toast.LENGTH_SHORT).show();
-									e.printStackTrace();
-								}
-							}
-
-							// if the write data works, read the the data
-							if (writeWorks) {
-								readParse();
-							}
-							return true;
+						} catch (Exception e) {
+							writeWorks = false;
+							// TODO Auto-generated catch block
+							Log.e("Error: ", e.getMessage().toString());
+							Toast.makeText(mContext, "Error: Couldn't write data to file", Toast.LENGTH_SHORT).show();
+							e.printStackTrace();
 						}
-					});
-					Messenger rentalsMessenger = new Messenger(getRentalsHandler);
-					Intent startRentalsIntent = new Intent(this, TopRentalsService.class);
-					startRentalsIntent.putExtra(TopRentalsService.MSGR_KEY, rentalsMessenger);
-					startRentalsIntent.putExtra(TopRentalsService.URL_STR, "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/top_rentals.json?apikey=bf72tfc2zjfbdscenpwx2e2r");
+					}
 
-					startService(startRentalsIntent);
-					// If the user doesn't have a connection, but has the txt file then the data will still output
-				} else if (mfile.exists() && file.connectionStatus(mContext) == false) {
-					readParse();
-					// Check for no connection
-				} else {
-					// create alert dialog for users without a valid internet connection
-					AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
-					builder1.setTitle("No Connection");
-					builder1.setMessage("You don't have a valid internet connection.");
-					builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface arg0, int arg1) {
-							// TODO Auto-generated method stub
-							Toast.makeText(getApplicationContext(), "Check your connection and try again.", Toast.LENGTH_LONG).show();
-						}
-					});
-
-					// show alert
-					builder1.show();
+					// if the write data works, read the the data
+					if (writeWorks) {
+						readParse();
+					}
+					return true;
 				}
+			});
+			Messenger rentalsMessenger = new Messenger(getRentalsHandler);
+			Intent startRentalsIntent = new Intent(this, TopRentalsService.class);
+			startRentalsIntent.putExtra(TopRentalsService.MSGR_KEY, rentalsMessenger);
+			startRentalsIntent.putExtra(TopRentalsService.URL_STR, "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/top_rentals.json?apikey=bf72tfc2zjfbdscenpwx2e2r");
+
+			startService(startRentalsIntent);
+			// If the user doesn't have a connection, but has the txt file then the data will still output
+		} else if (mfile.exists() && file.connectionStatus(mContext) == false) {
+			readParse();
+			// Check for no connection
+		} else {
+			// create alert dialog for users without a valid internet connection
+			AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+			builder1.setTitle("No Connection");
+			builder1.setMessage("You don't have a valid internet connection.");
+			builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface arg0, int arg1) {
+					// TODO Auto-generated method stub
+					Toast.makeText(getApplicationContext(), "Check your connection and try again.", Toast.LENGTH_LONG).show();
+				}
+			});
+
+			// show alert
+			builder1.show();
+		}
 	}
-	
+
 	public void readParse(){
 		String fileString = file.readStrFile(mContext, FILE_NAME);
 		Toast.makeText(mContext, "Read data from file", Toast.LENGTH_SHORT).show();
@@ -405,6 +411,6 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 			e.printStackTrace();
 		}
 	}
-	
+
 
 }

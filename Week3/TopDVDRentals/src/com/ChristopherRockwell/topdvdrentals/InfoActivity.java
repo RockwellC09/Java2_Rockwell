@@ -31,17 +31,13 @@ public class InfoActivity extends Activity {
 	public String posterURL;
 	Bundle data;
 	String myData;
-	
+	JSONObject obj;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//			setContentView(R.layout.rentals_frament);
-//		} else {
-//			setContentView(R.layout.info_activity);
-//		}
-		
-		setContentView(R.layout.info_activity);
+
+		setContentView(R.layout.info_fragment);
 		context = this;
 
 		titleView = (TextView) this.findViewById(R.id.titleView);
@@ -49,13 +45,13 @@ public class InfoActivity extends Activity {
 		textButton = (Button) this.findViewById(R.id.textButton);
 		posterButton = (Button) this.findViewById(R.id.posterBtn);
 		infoView.setMovementMethod(new ScrollingMovementMethod());
-	
+
 		// set button widths equal
 		Display display = getWindowManager().getDefaultDisplay();
 		Point size = new Point();
-        display.getSize(size);
-	    textButton.setWidth(size.x/2);
-	    posterButton.setWidth(size.x/2);
+		display.getSize(size);
+		textButton.setWidth(size.x/2);
+		posterButton.setWidth(size.x/2);
 
 		// custom typefaces 
 		Typeface customFont = Typeface.createFromAsset(this.getAssets(), "Exo2-Bold.ttf");
@@ -78,7 +74,6 @@ public class InfoActivity extends Activity {
 		Log.i("Movie Result: ", myData);
 
 		// parse JSON data
-		JSONObject obj;
 		try {
 			obj = new JSONObject(myData);
 			JSONObject imgCast = obj.getJSONObject("posters");
@@ -125,21 +120,23 @@ public class InfoActivity extends Activity {
 				startActivity(urlIntent);
 			}
 		});
-		
+
 		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
 			Intent firstActivity = new Intent(getApplicationContext(),MainActivity.class);
-			startActivity(firstActivity);
+			startActivityForResult(firstActivity,0);
 		} else {
 			Toast.makeText(this, "Second Activity", Toast.LENGTH_LONG).show();
 		}
-		
+
 	}
 
-	// pass movie title back to MainActivityå
+	// pass movie title back to MainActivity
 	@Override
 	public void finish() {
 		Intent data = new Intent();
 		data.putExtra("srcMovie", title);
+		MainActivity.dataString = obj.toString();
+		Log.i("Ran", "Finish");
 		setResult(RESULT_OK, data);
 		super.finish();
 	}
@@ -150,6 +147,7 @@ public class InfoActivity extends Activity {
 		// saved bundle data
 		savedInstanceState.putParcelable("bundleData", data);
 		Log.i("Saved: ", "Instance data saved!");
+		finish();
 	}
 
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
