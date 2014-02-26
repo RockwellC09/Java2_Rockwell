@@ -16,20 +16,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.loopj.android.image.SmartImageView;
-
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Messenger;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Messenger;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -40,16 +43,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.loopj.android.image.SmartImageView;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class MainActivity.
  */
 public class MainActivity extends Activity implements OnClickListener, RentalsFramgment.onRentalsClick {
-	Button getRentalsBtn;
-	Button srcButton;
+	static Button getRentalsBtn;
+	static Button srcButton;
 	String response = null;
 	FileManagerSingleton file;
-	Context mContext;
+	static Context mContext;
 	public static final String FILE_NAME = "TopRental.txt";
 	public static final String MOVIE_KEY = "movie";
 	public static final String LIST_KEY = "myList";
@@ -61,14 +66,22 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 	File mfile;
 	Intent secondActivity;
 	int selected;
-	MoviesArrayAdapter adapter;
-	boolean checkSrc = false;
+	static MoviesArrayAdapter adapter;
+	static boolean checkSrc = false;
 	boolean haveResults = false;
-	String srcResult;
+	static String srcResult;
 	JSONObject castObj;
 	String itemText;
 	String objText;
 	static String dataString;
+	static EditText input;
+	static TextView listTv1;
+	static TextView listTv2;
+	static TextView listTv3;
+	static TextView listTv4;
+	static TextView listRowTv1;
+	static TextView listRowTv2;
+	static TextView listRowTv3;
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -88,6 +101,7 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 		} else {
 			setContentView(R.layout.main_fragment);
 		}
+		
 		getRentalsBtn = (Button) this.findViewById(R.id.rentalsBtn);
 		srcButton = (Button) this.findViewById(R.id.srcBtn);
 		getRentalsBtn.setOnClickListener(this);
@@ -116,6 +130,16 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 		tv4.setTypeface(customFont);
 
 		listV.addHeaderView(listHeader);
+		
+		// access header and to text view to change color in preferences
+		listTv1 = (TextView) listV.findViewById(R.id.title_header);
+		listTv2 = (TextView) listV.findViewById(R.id.title_header);
+		listTv3 = (TextView) listV.findViewById(R.id.title_header);
+		listTv4 = (TextView) listV.findViewById(R.id.title_header);
+		
+		listRowTv1 = (TextView) listV.findViewById(R.id.title_header);
+		listRowTv2 = (TextView) listV.findViewById(R.id.title_header);
+		listRowTv3 = (TextView) listV.findViewById(R.id.title_header);
 
 		file = FileManagerSingleton.getInstance();
 
@@ -203,7 +227,7 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 				alert.setTitle("Search by Minimum Critic Rating");
 				alert.setMessage("Input Minimum Rating ");
 				// Set an EditText view to get user input 
-				final EditText input = new EditText(mContext);
+				input = new EditText(mContext);
 				input.setText(srcResult);
 				alert.setView(input);
 				alert.setPositiveButton("Search", new DialogInterface.OnClickListener() {
@@ -249,6 +273,27 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 			getRentalsBtn.performClick();
 
 		}
+	}
+	
+	@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+ 
+        return super.onCreateOptionsMenu(menu);
+    }
+	
+	
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		if (item.getItemId() == R.id.search_menu_item) {
+			showDialog();
+		} else if (item.getItemId() == R.id.preferences_menu_item) {
+			showPrefsDialog();
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
@@ -411,6 +456,131 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 			e.printStackTrace();
 		}
 	}
+	
+	public static class AlertDialogFragment extends DialogFragment {
+		public static AlertDialogFragment newInstance(int title) {
+			AlertDialogFragment frag = new AlertDialogFragment();
+	        Bundle args = new Bundle();
+	        args.putInt("title", title);
+	        frag.setArguments(args);
+	        return frag;
+	    }
+		
+		@Override
+	    public Dialog onCreateDialog(Bundle savedInstanceState) {
+	        int title = getArguments().getInt("title");
+	        input = new EditText(mContext);
+			input.setText(srcResult);
+			
+			
 
+	        return new AlertDialog.Builder(getActivity())
+	                .setIcon(null)
+	                .setTitle(title)
+	                .setMessage("Input Minimum Rating ")
+	                .setView(input)
+	                .setPositiveButton("Search",
+	                    new DialogInterface.OnClickListener() {
+	                        public void onClick(DialogInterface dialog, int whichButton) {
+	                            ((MainActivity)getActivity()).doPositiveClick();
+	                        }
+	                    }
+	                )
+	                .setNegativeButton("Cancel",
+	                    new DialogInterface.OnClickListener() {
+	                        public void onClick(DialogInterface dialog, int whichButton) {
+	                            ((MainActivity)getActivity()).doNegativeClick();
+	                        }
+	                    }
+	                )
+	                .setNeutralButton("Clear Search",
+	                    new DialogInterface.OnClickListener() {
+	                        public void onClick(DialogInterface dialog, int whichButton) {
+	                        	adapter.getFilter().filter("0");
+	    						checkSrc = false;
+	    						srcResult = "";
+	                        }
+	                    }
+	                )
+	                .create();
+	    }
+	}
+	
+	public static class ThemeDialogFragment extends DialogFragment {
+		public static ThemeDialogFragment newInstance() {
+			ThemeDialogFragment frag = new ThemeDialogFragment();
+	        return frag;
+			
+		}
+		
+		@Override
+	    public Dialog onCreateDialog(Bundle savedInstanceState) {
+			final CharSequence[] Themes = {"Default", "Purple"};
+			
+			return new AlertDialog.Builder(getActivity())
+            .setIcon(null)
+            .setTitle("Change element colors")
+            .setSingleChoiceItems(Themes, -1, new DialogInterface.OnClickListener() {
+            	public void onClick(DialogInterface dialog, int item) {
+            		if (item == 0) {
+            			// set default text colors
+            			getRentalsBtn.setBackgroundColor(getResources().getColor(R.color.btn_color));
+            			srcButton.setTextColor(getResources().getColor(R.color.btn_color));
+            		} else {
+            			getRentalsBtn.setBackgroundColor(getResources().getColor(R.color.btn_color2));
+            			srcButton.setTextColor(getResources().getColor(R.color.btn_color2));
+            			listTv1.setTextColor(getResources().getColor(R.color.btn_color2));
+            			listTv2.setTextColor(getResources().getColor(R.color.btn_color2));
+            			listTv3.setTextColor(getResources().getColor(R.color.btn_color2));
+            			listTv4.setTextColor(getResources().getColor(R.color.btn_color2));
+            		}
+            		Toast.makeText(mContext, "Color changed to "+Themes[item], Toast.LENGTH_SHORT).show();
+            	}
+            })
+            .setPositiveButton("Ok",
+            	new DialogInterface.OnClickListener() {
+            		public void onClick(DialogInterface dialog, int whichButton) {
+            			// Do nothing
+            		}
+            	}
+            )
+            .create();
+		}
+	}
+
+	
+	void showDialog() {
+	    DialogFragment newFragment = AlertDialogFragment.newInstance(
+	            R.string.alert);
+	    newFragment.show(getFragmentManager(), "dialog");
+	}
+	
+	void showPrefsDialog() {
+	    DialogFragment newFragment = ThemeDialogFragment.newInstance();
+	    newFragment.show(getFragmentManager(), "dialog");
+	}
+
+	public void doPositiveClick() {
+	    // Do stuff here.
+		srcResult = input.getText().toString();
+		// check to see if get items has been clicked and the results are in the listView
+		if (haveResults) {
+			// check to see if its a number and between 0 and 100
+			if (srcResult.matches("\\d+") && Integer.parseInt(srcResult) >= 0 && 
+					Integer.parseInt(srcResult) <= 100) {
+				adapter.getFilter().filter(srcResult);
+				checkSrc = true;
+			} else {
+				Toast.makeText(mContext, "Please enter a number between 0 and 100", Toast.LENGTH_LONG).show();
+			}
+		} else {
+			Toast.makeText(mContext, "You must get rental results before searching.", Toast.LENGTH_LONG).show();
+		}
+	}
+
+	public void doNegativeClick() {
+	    // Do stuff here.
+	    Log.i("FragmentAlertDialog", "Negative click!");
+	}
 
 }

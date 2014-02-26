@@ -2,5 +2,6 @@
 <resources>
     <color name="bg_color">#FAE4A2</color>
     <color name="btn_color">#DE5E37</color>
+    <color name="btn_color2">#905CAD</color>
     
 </resources>

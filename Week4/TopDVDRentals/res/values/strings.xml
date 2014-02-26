@@ -16,5 +16,8 @@
     <string name="src_btn">Search</string>
     <string name="text_str">Share via Text</string>
     <string name="poster_str">View Large Poster</string>
+    <string name="src">Search</string>
+    <string name="prefs">Preferneces</string>
+    <string name="alert">Search by Minimum Critic Rating</string>
 
 </resources>
