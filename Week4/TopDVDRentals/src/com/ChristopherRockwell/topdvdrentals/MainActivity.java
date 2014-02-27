@@ -23,12 +23,15 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,6 +42,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,7 +57,7 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 	static Button getRentalsBtn;
 	static Button srcButton;
 	String response = null;
-	FileManagerSingleton file;
+	static FileManagerSingleton file;
 	static Context mContext;
 	public static final String FILE_NAME = "TopRental.txt";
 	public static final String MOVIE_KEY = "movie";
@@ -79,9 +83,11 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 	static TextView listTv2;
 	static TextView listTv3;
 	static TextView listTv4;
-	static TextView listRowTv1;
-	static TextView listRowTv2;
-	static TextView listRowTv3;
+	static String eColor;
+	static boolean rateBtnClick = false;
+	static int selectRadio;
+	static EditText fName;
+	static EditText lName;
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -101,6 +107,7 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 		} else {
 			setContentView(R.layout.main_fragment);
 		}
+		
 		
 		getRentalsBtn = (Button) this.findViewById(R.id.rentalsBtn);
 		srcButton = (Button) this.findViewById(R.id.srcBtn);
@@ -122,24 +129,16 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 		smrtImg = (SmartImageView) findViewById(R.id.img);
 
 		// set custom text for the list headers
-		TextView tv1 = (TextView) listHeader.findViewById(R.id.title_header);
-		TextView tv3 = (TextView) listHeader.findViewById(R.id.rating1_header);
-		TextView tv4 = (TextView) listHeader.findViewById(R.id.rating2_header);
-		tv1.setTypeface(customFont);
-		tv3.setTypeface(customFont);
-		tv4.setTypeface(customFont);
+		listTv1 = (TextView) listHeader.findViewById(R.id.title_header);
+		listTv2 = (TextView) listHeader.findViewById(R.id.img_header);
+		listTv3 = (TextView) listHeader.findViewById(R.id.rating1_header);
+		listTv4 = (TextView) listHeader.findViewById(R.id.rating2_header);
+		listTv1.setTypeface(customFont);
+		listTv2.setTypeface(customFont);
+		listTv3.setTypeface(customFont);
+		listTv4.setTypeface(customFont);
 
 		listV.addHeaderView(listHeader);
-		
-		// access header and to text view to change color in preferences
-		listTv1 = (TextView) listV.findViewById(R.id.title_header);
-		listTv2 = (TextView) listV.findViewById(R.id.title_header);
-		listTv3 = (TextView) listV.findViewById(R.id.title_header);
-		listTv4 = (TextView) listV.findViewById(R.id.title_header);
-		
-		listRowTv1 = (TextView) listV.findViewById(R.id.title_header);
-		listRowTv2 = (TextView) listV.findViewById(R.id.title_header);
-		listRowTv3 = (TextView) listV.findViewById(R.id.title_header);
 
 		file = FileManagerSingleton.getInstance();
 
@@ -162,6 +161,29 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 			} else {
 				Log.i("List: ", "null");
 			}
+		}
+		
+		// check for preference color
+		if (eColor == "default" || eColor == null) { 
+			// set default element colors
+			getRentalsBtn.setBackgroundColor(getResources().getColor(R.color.btn_color));
+			srcButton.setTextColor(getResources().getColor(R.color.btn_color));
+		} else if (eColor == "purple") {
+			// set purple element colors 
+			getRentalsBtn.setBackgroundColor(getResources().getColor(R.color.btn_color2));
+			srcButton.setTextColor(getResources().getColor(R.color.btn_color2));
+			listTv1.setTextColor(getResources().getColor(R.color.btn_color2));
+			listTv2.setTextColor(getResources().getColor(R.color.btn_color2));
+			listTv3.setTextColor(getResources().getColor(R.color.btn_color2));
+			listTv4.setTextColor(getResources().getColor(R.color.btn_color2));
+		} else if (eColor == "blue") {
+			// set blue element colors 
+			getRentalsBtn.setBackgroundColor(getResources().getColor(R.color.btn_color3));
+			srcButton.setTextColor(getResources().getColor(R.color.btn_color3));
+			listTv1.setTextColor(getResources().getColor(R.color.btn_color3));
+			listTv2.setTextColor(getResources().getColor(R.color.btn_color3));
+			listTv3.setTextColor(getResources().getColor(R.color.btn_color3));
+			listTv4.setTextColor(getResources().getColor(R.color.btn_color3));
 		}
 
 		// create intent and list view click listener in preparation of moving to the second view
@@ -240,6 +262,8 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 									Integer.parseInt(srcResult) <= 100) {
 								adapter.getFilter().filter(srcResult);
 								checkSrc = true;
+								InfoFragment.infoView.setText(R.string.dummy_text);
+								InfoFragment.titleView.setText(R.string.dummy_text);
 							} else {
 								Toast.makeText(mContext, "Please enter a number between 0 and 100", Toast.LENGTH_LONG).show();
 							}
@@ -259,8 +283,10 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						// TODO Auto-generated method stub
-						adapter.getFilter().filter("0");
-						checkSrc = false;
+						if (checkSrc) {
+                    		adapter.getFilter().filter("0");
+                    	}
+                    	checkSrc = false;
 						srcResult = "";
 					}
 				});
@@ -269,9 +295,20 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 		});
 
 		// force click the rentals button for better data retention 
-		if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && dataString != null) {
+		if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && dataString != null || file.clickedRentals) {
 			getRentalsBtn.performClick();
 
+		}
+		
+		// check to see if shared preferences exist and if so display welcome message
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+		String firstName = sharedPreferences.getString("first", "");
+		String lastName = sharedPreferences.getString("last", "");
+		if (firstName != "" && lastName != "") {
+			if (file.hasRan == false) {
+				Toast.makeText(mContext, "Hello, Welcome " + firstName + " " + lastName, Toast.LENGTH_LONG).show();
+				file.hasRan = true;
+			}
 		}
 	}
 	
@@ -279,7 +316,6 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
- 
         return super.onCreateOptionsMenu(menu);
     }
 	
@@ -290,6 +326,8 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 		// TODO Auto-generated method stub
 		if (item.getItemId() == R.id.search_menu_item) {
 			showDialog();
+		} else if (item.getItemId() == R.id.color_menu_item) {
+			showColorsDialog();
 		} else if (item.getItemId() == R.id.preferences_menu_item) {
 			showPrefsDialog();
 		}
@@ -298,7 +336,9 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 
 	@Override
 	public void onClick(View arg0) {
+		rateBtnClick = true;
 		onRentalsButtonClick();
+		file.clickedRentals = true;
 	}  
 	public List<Movie> getList() {
 		return this.mList;
@@ -455,6 +495,19 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 			Toast.makeText(mContext, "Error: Couldn't retrieve the data", Toast.LENGTH_SHORT).show();
 			e.printStackTrace();
 		}
+		
+		if (checkSrc) {
+			srcResult = input.getText().toString();
+			// check to see if get items has been clicked and the results are in the listView
+			// check to see if its a number and between 0 and 100
+			if (srcResult.matches("\\d+") && Integer.parseInt(srcResult) >= 0 && 
+					Integer.parseInt(srcResult) <= 100) {
+				adapter.getFilter().filter(srcResult);
+				checkSrc = true;
+			} else {
+				Toast.makeText(mContext, "Please enter a number between 0 and 100", Toast.LENGTH_LONG).show();
+			}
+		}
 	}
 	
 	public static class AlertDialogFragment extends DialogFragment {
@@ -496,8 +549,10 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 	                .setNeutralButton("Clear Search",
 	                    new DialogInterface.OnClickListener() {
 	                        public void onClick(DialogInterface dialog, int whichButton) {
-	                        	adapter.getFilter().filter("0");
-	    						checkSrc = false;
+	                        	if (checkSrc) {
+	                        		adapter.getFilter().filter("0");
+	                        	}
+	                        	checkSrc = false;
 	    						srcResult = "";
 	                        }
 	                    }
@@ -515,26 +570,77 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 		
 		@Override
 	    public Dialog onCreateDialog(Bundle savedInstanceState) {
-			final CharSequence[] Themes = {"Default", "Purple"};
+			final CharSequence[] Themes = {"Default", "Purple", "Blue"};
+			
+			if (eColor == "default" || eColor == null) {
+				selectRadio = 0;
+			} else if (eColor == "purple") {
+				selectRadio = 1;
+			} else if (eColor == "blue") {
+				selectRadio = 2;
+			}
 			
 			return new AlertDialog.Builder(getActivity())
             .setIcon(null)
             .setTitle("Change element colors")
-            .setSingleChoiceItems(Themes, -1, new DialogInterface.OnClickListener() {
+            .setSingleChoiceItems(Themes, selectRadio, new DialogInterface.OnClickListener() {
             	public void onClick(DialogInterface dialog, int item) {
             		if (item == 0) {
-            			// set default text colors
+            			// set default element colors
             			getRentalsBtn.setBackgroundColor(getResources().getColor(R.color.btn_color));
             			srcButton.setTextColor(getResources().getColor(R.color.btn_color));
-            		} else {
+            			listTv1.setTextColor(getResources().getColor(R.color.btn_color));
+            			listTv2.setTextColor(getResources().getColor(R.color.btn_color));
+            			listTv3.setTextColor(getResources().getColor(R.color.btn_color));
+            			listTv4.setTextColor(getResources().getColor(R.color.btn_color));
+            			if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            				InfoFragment.titleView.setTextColor(getResources().getColor(R.color.btn_color));
+            				InfoFragment.infoView.setTextColor(getResources().getColor(R.color.btn_color));
+            				InfoFragment.textButton.setTextColor(getResources().getColor(R.color.btn_color));
+            				InfoFragment.posterButton.setTextColor(getResources().getColor(R.color.btn_color));
+            			}
+            			eColor = "default";
+            			if (rateBtnClick) {
+            				getRentalsBtn.performClick();
+            			}
+            		} else if (item == 1) {
+            			// set purple element colors 
             			getRentalsBtn.setBackgroundColor(getResources().getColor(R.color.btn_color2));
             			srcButton.setTextColor(getResources().getColor(R.color.btn_color2));
             			listTv1.setTextColor(getResources().getColor(R.color.btn_color2));
             			listTv2.setTextColor(getResources().getColor(R.color.btn_color2));
             			listTv3.setTextColor(getResources().getColor(R.color.btn_color2));
             			listTv4.setTextColor(getResources().getColor(R.color.btn_color2));
+            			if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            				InfoFragment.titleView.setTextColor(getResources().getColor(R.color.btn_color2));
+            				InfoFragment.infoView.setTextColor(getResources().getColor(R.color.btn_color2));
+            				InfoFragment.textButton.setTextColor(getResources().getColor(R.color.btn_color2));
+            				InfoFragment.posterButton.setTextColor(getResources().getColor(R.color.btn_color2));
+            			}
+            			eColor = "purple";
+            			if (rateBtnClick) {
+            				getRentalsBtn.performClick();
+            			}
+            		} else {
+            			// set blue element colors 
+            			getRentalsBtn.setBackgroundColor(getResources().getColor(R.color.btn_color3));
+            			srcButton.setTextColor(getResources().getColor(R.color.btn_color3));
+            			listTv1.setTextColor(getResources().getColor(R.color.btn_color3));
+            			listTv2.setTextColor(getResources().getColor(R.color.btn_color3));
+            			listTv3.setTextColor(getResources().getColor(R.color.btn_color3));
+            			listTv4.setTextColor(getResources().getColor(R.color.btn_color3));
+            			if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            				InfoFragment.titleView.setTextColor(getResources().getColor(R.color.btn_color3));
+            				InfoFragment.infoView.setTextColor(getResources().getColor(R.color.btn_color3));
+            				InfoFragment.textButton.setTextColor(getResources().getColor(R.color.btn_color3));
+            				InfoFragment.posterButton.setTextColor(getResources().getColor(R.color.btn_color3));
+            			}
+            			eColor = "blue";
+            			if (rateBtnClick) {
+            				getRentalsBtn.performClick();
+            			}
             		}
-            		Toast.makeText(mContext, "Color changed to "+Themes[item], Toast.LENGTH_SHORT).show();
+            		Toast.makeText(mContext, "Colors changed to "+Themes[item], Toast.LENGTH_SHORT).show();
             	}
             })
             .setPositiveButton("Ok",
@@ -547,6 +653,78 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
             .create();
 		}
 	}
+	
+	public static class PrefsDialogFragment extends DialogFragment {
+		public static PrefsDialogFragment newInstance() {
+			PrefsDialogFragment frag = new PrefsDialogFragment();
+	        return frag;
+		}
+		
+		@Override
+	    public Dialog onCreateDialog(Bundle savedInstanceState) {
+			fName = new EditText(mContext);
+			lName = new EditText(mContext);
+			fName.setHint("Enter First Name");
+			lName.setHint("Enter Last Name");
+			
+			// check for values in shared preferences and populate edit text fields with those values
+			SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+			String firstName = sharedPreferences.getString("first", "");
+			String lastName = sharedPreferences.getString("last", "");
+			if (firstName != null && lastName != null) {
+				fName.setText(firstName);
+				lName.setText(lastName);
+			}
+			
+			LinearLayout layout = new LinearLayout(mContext);
+			layout.setOrientation(LinearLayout.VERTICAL);
+			layout.addView(fName);
+			layout.addView(lName);
+		return new AlertDialog.Builder(getActivity())
+        .setIcon(null)
+        .setTitle("Input your name")
+        .setView(layout)
+        .setPositiveButton("Save",
+        	new DialogInterface.OnClickListener() {
+        		public void onClick(DialogInterface dialog, int whichButton) {
+        			// remove whitespace
+        			String first = fName.getText().toString().replace(" ", "");
+        			String last = lName.getText().toString().replace(" ", "");
+        			if (!first.matches("") && !last.matches("")) {
+        				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            			Editor edit = sharedPreferences.edit();
+            			edit.putString("first", first);
+            			edit.putString("last", last);
+            			edit.apply(); 
+            			// pull from preferences
+            			String firstN = sharedPreferences.getString("first", "");
+            			String lastN = sharedPreferences.getString("last", "");
+        				Toast.makeText(mContext, "Hello, Welcome " + firstN + " " + lastN, Toast.LENGTH_LONG).show();
+        				file.hasRan = true;
+        			} else {
+        				Toast.makeText(mContext, "Please enter your first and last name to save to preferencess.", Toast.LENGTH_LONG).show();
+        			}
+        		}
+        	}
+        )
+        .setNegativeButton("Cancel", 
+        	new DialogInterface.OnClickListener() {
+    			public void onClick(DialogInterface dialog, int whichButton) {
+    			// Do nothing
+    			}
+    		}
+        )
+        .setNeutralButton("Clear Preferences", 
+        	new DialogInterface.OnClickListener() {
+    			public void onClick(DialogInterface dialog, int whichButton) {
+    				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        			sharedPreferences.edit().clear().commit();
+    			}
+    		}
+        )
+        .create();
+	}
+}
 
 	
 	void showDialog() {
@@ -555,8 +733,13 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 	    newFragment.show(getFragmentManager(), "dialog");
 	}
 	
-	void showPrefsDialog() {
+	void showColorsDialog() {
 	    DialogFragment newFragment = ThemeDialogFragment.newInstance();
+	    newFragment.show(getFragmentManager(), "dialog");
+	}
+	
+	void showPrefsDialog() {
+		DialogFragment newFragment = PrefsDialogFragment.newInstance();
 	    newFragment.show(getFragmentManager(), "dialog");
 	}
 

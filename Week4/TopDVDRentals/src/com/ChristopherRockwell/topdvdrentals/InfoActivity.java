@@ -22,10 +22,10 @@ import android.widget.Toast;
 
 public class InfoActivity extends Activity {
 
-	TextView titleView;
-	TextView infoView;
-	Button textButton;
-	Button posterButton;
+	static TextView titleView;
+	static TextView infoView;
+	static Button textButton;
+	static Button posterButton;
 	Context context;
 	public String title;
 	public String posterURL;
@@ -39,12 +39,33 @@ public class InfoActivity extends Activity {
 
 		setContentView(R.layout.info_fragment);
 		context = this;
+		
+		//Log.i("Color: ", MainActivity.eColor);
 
 		titleView = (TextView) this.findViewById(R.id.titleView);
 		infoView = (TextView) this.findViewById(R.id.infoView);
 		textButton = (Button) this.findViewById(R.id.textButton);
 		posterButton = (Button) this.findViewById(R.id.posterBtn);
 		infoView.setMovementMethod(new ScrollingMovementMethod());
+		
+		
+		// check for preference color
+		if (MainActivity.eColor == "default" || MainActivity.eColor == null) { 
+			titleView.setTextColor(getResources().getColor(R.color.btn_color));
+			infoView.setTextColor(getResources().getColor(R.color.btn_color));
+			textButton.setTextColor(getResources().getColor(R.color.btn_color));
+			posterButton.setTextColor(getResources().getColor(R.color.btn_color));
+		} else if (MainActivity.eColor == "purple") {
+			titleView.setTextColor(getResources().getColor(R.color.btn_color2));
+			infoView.setTextColor(getResources().getColor(R.color.btn_color2));
+			textButton.setTextColor(getResources().getColor(R.color.btn_color2));
+			posterButton.setTextColor(getResources().getColor(R.color.btn_color2));
+		} else if (MainActivity.eColor == "blue") {
+			titleView.setTextColor(getResources().getColor(R.color.btn_color3));
+			infoView.setTextColor(getResources().getColor(R.color.btn_color3));
+			textButton.setTextColor(getResources().getColor(R.color.btn_color3));
+			posterButton.setTextColor(getResources().getColor(R.color.btn_color3));
+		}
 
 		// set button widths equal
 		Display display = getWindowManager().getDefaultDisplay();
@@ -149,7 +170,7 @@ public class InfoActivity extends Activity {
 		Log.i("Saved: ", "Instance data saved!");
 		finish();
 	}
-
+	
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 
 		super.onRestoreInstanceState(savedInstanceState);

@@ -17,6 +17,8 @@ import android.util.Log;
 public class FileManagerSingleton {
 
 	private static FileManagerSingleton mngr_instance;
+	boolean clickedRentals;
+	boolean hasRan;
 	
 	//constructor 
 	private FileManagerSingleton() {

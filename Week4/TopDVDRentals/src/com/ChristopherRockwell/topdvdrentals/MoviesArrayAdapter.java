@@ -66,11 +66,21 @@ public class MoviesArrayAdapter extends ArrayAdapter<Movie>{
 		critic = (TextView) row.findViewById(R.id.rating1);
 		audience = (TextView) row.findViewById(R.id.rating2);
 
-		// set ListView rows text color and custom font
-		title.setTextColor(context.getResources().getColor(R.color.btn_color));
-		critic.setTextColor(context.getResources().getColor(R.color.btn_color));
-		audience.setTextColor(context.getResources().getColor(R.color.btn_color));
-
+		if (MainActivity.eColor == "default" || MainActivity.eColor == null) {
+			title.setTextColor(context.getResources().getColor(R.color.btn_color));
+			critic.setTextColor(context.getResources().getColor(R.color.btn_color));
+			audience.setTextColor(context.getResources().getColor(R.color.btn_color));
+		} else if (MainActivity.eColor == "purple") {
+			title.setTextColor(context.getResources().getColor(R.color.btn_color2));
+			critic.setTextColor(context.getResources().getColor(R.color.btn_color2));
+			audience.setTextColor(context.getResources().getColor(R.color.btn_color2));
+		} else if (MainActivity.eColor == "blue") {
+			title.setTextColor(context.getResources().getColor(R.color.btn_color3));
+			critic.setTextColor(context.getResources().getColor(R.color.btn_color3));
+			audience.setTextColor(context.getResources().getColor(R.color.btn_color3));
+		}
+		
+		// set ListView rows custom font
 		title.setTypeface(MainActivity.customFont2);
 		critic.setTypeface(MainActivity.customFont2);
 		audience.setTypeface(MainActivity.customFont2);

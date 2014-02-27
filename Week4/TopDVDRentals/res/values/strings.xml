@@ -19,5 +19,6 @@
     <string name="src">Search</string>
     <string name="prefs">Preferneces</string>
     <string name="alert">Search by Minimum Critic Rating</string>
+    <string name="chang_color">Change Colors</string>
 
 </resources>
