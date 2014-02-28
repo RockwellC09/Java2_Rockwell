@@ -262,8 +262,10 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 									Integer.parseInt(srcResult) <= 100) {
 								adapter.getFilter().filter(srcResult);
 								checkSrc = true;
-								InfoFragment.infoView.setText(R.string.dummy_text);
-								InfoFragment.titleView.setText(R.string.dummy_text);
+								if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+									InfoFragment.infoView.setText(R.string.dummy_text);
+									InfoFragment.titleView.setText(R.string.dummy_text);
+								}
 							} else {
 								Toast.makeText(mContext, "Please enter a number between 0 and 100", Toast.LENGTH_LONG).show();
 							}
@@ -753,6 +755,10 @@ public class MainActivity extends Activity implements OnClickListener, RentalsFr
 					Integer.parseInt(srcResult) <= 100) {
 				adapter.getFilter().filter(srcResult);
 				checkSrc = true;
+				if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+					InfoFragment.infoView.setText(R.string.dummy_text);
+					InfoFragment.titleView.setText(R.string.dummy_text);
+				}
 			} else {
 				Toast.makeText(mContext, "Please enter a number between 0 and 100", Toast.LENGTH_LONG).show();
 			}
