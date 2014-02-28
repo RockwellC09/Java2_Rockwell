@@ -39,7 +39,7 @@ public class InfoActivity extends Activity {
 
 		setContentView(R.layout.info_fragment);
 		context = this;
-		
+
 		//Log.i("Color: ", MainActivity.eColor);
 
 		titleView = (TextView) this.findViewById(R.id.titleView);
@@ -47,8 +47,8 @@ public class InfoActivity extends Activity {
 		textButton = (Button) this.findViewById(R.id.textButton);
 		posterButton = (Button) this.findViewById(R.id.posterBtn);
 		infoView.setMovementMethod(new ScrollingMovementMethod());
-		
-		
+
+
 		// check for preference color
 		if (MainActivity.eColor == "default" || MainActivity.eColor == null) { 
 			titleView.setTextColor(getResources().getColor(R.color.btn_color));
@@ -170,7 +170,7 @@ public class InfoActivity extends Activity {
 		Log.i("Saved: ", "Instance data saved!");
 		finish();
 	}
-	
+
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 
 		super.onRestoreInstanceState(savedInstanceState);

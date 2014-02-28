@@ -59,7 +59,7 @@ public class InfoFragment extends Fragment {
 		textButton = (Button) view.findViewById(R.id.textButton);
 		posterButton = (Button) view.findViewById(R.id.posterBtn);
 		infoView.setMovementMethod(new ScrollingMovementMethod());
-		
+
 		// check for preference color
 		if (MainActivity.eColor == "default" || MainActivity.eColor == null) { 
 			titleView.setTextColor(getResources().getColor(R.color.btn_color));
@@ -144,7 +144,7 @@ public class InfoFragment extends Fragment {
 			}
 		});
 	}
-	
+
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
